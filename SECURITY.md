@@ -4,8 +4,8 @@
 
 This repository is the source of truth for the public Prime Agent catalog payloads:
 
-- `catalog/models.v1.json`
-- `catalog/mcp-services.v2.json`
+- `models/catalog.v1.json`
+- `plugins/catalog.v2.json`
 
 Production consumers must treat these files as trusted release artifacts only after
 repository review and CI pass. The validator catches structural drift, duplicate
@@ -14,7 +14,7 @@ secrets, malformed MCP transports, and count/order drift. It is not a runtime
 network sandbox. Consumers still own request-time DNS, redirect, credential, and
 SSRF protections.
 
-The `sources/mcp/` tree is migration evidence and reference material. It is not a
+The `plugins/sources/`, `plugins/audit/`, and `plugins/reference/` trees are migration evidence and reference material. It is not a
 runtime input and CI does not claim deterministic regeneration from it.
 
 ## Required repository settings

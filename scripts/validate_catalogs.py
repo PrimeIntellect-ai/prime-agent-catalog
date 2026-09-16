@@ -19,8 +19,8 @@ from urllib.parse import parse_qsl, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 
-MODEL_CATALOG = Path("catalog/models.v1.json")
-MCP_CATALOG = Path("catalog/mcp-services.v2.json")
+MODEL_CATALOG = Path("models/catalog.v1.json")
+MCP_CATALOG = Path("plugins/catalog.v2.json")
 MIGRATION = Path(".catalog-migration.v1.json")
 CATALOG_PATHS = (MODEL_CATALOG, MCP_CATALOG)
 
@@ -881,9 +881,12 @@ def validate(root: Path = ROOT) -> list[str]:
     ROOT = root.resolve()
     errors: list[str] = []
 
-    unexpected_catalog_json = sorted(p.relative_to(ROOT) for p in (ROOT / "catalog").glob("*.json")) if (ROOT / "catalog").exists() else []
-    if unexpected_catalog_json != sorted(CATALOG_PATHS):
-        _error(errors, "catalog", f"expected exactly public catalog JSON files {list(CATALOG_PATHS)!r}, found {unexpected_catalog_json!r}")
+    models_json = sorted(str(p.relative_to(ROOT)) for p in (ROOT / "models").glob("*.json")) if (ROOT / "models").exists() else []
+    if models_json != [str(MODEL_CATALOG)]:
+        _error(errors, "models", f"expected exactly one model catalog JSON file {str(MODEL_CATALOG)!r}, found {models_json!r}")
+    plugins_catalog = (ROOT / MCP_CATALOG).exists()
+    if not plugins_catalog:
+        _error(errors, "plugins", f"missing stable plugins catalog {str(MCP_CATALOG)!r}")
 
     models = _read_json(MODEL_CATALOG, errors)
     mcp = _read_json(MCP_CATALOG, errors)

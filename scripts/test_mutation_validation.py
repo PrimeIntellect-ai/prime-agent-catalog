@@ -18,8 +18,8 @@ from typing import Any, Callable
 import validate_catalogs
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL_PATH = Path("catalog/models.v1.json")
-MCP_PATH = Path("catalog/mcp-services.v2.json")
+MODEL_PATH = Path("models/catalog.v1.json")
+MCP_PATH = Path("plugins/catalog.v2.json")
 MIGRATION_PATH = Path(".catalog-migration.v1.json")
 
 Mutation = Callable[[dict[str, Any], dict[str, Any]], None]
@@ -30,7 +30,8 @@ def _write_json(root: Path, rel: Path, data: Any) -> None:
 
 
 def _prepare_root(tmpdir: Path) -> None:
-    (tmpdir / "catalog").mkdir()
+    (tmpdir / "models").mkdir()
+    (tmpdir / "plugins").mkdir()
     shutil.copyfile(ROOT / MODEL_PATH, tmpdir / MODEL_PATH)
     shutil.copyfile(ROOT / MCP_PATH, tmpdir / MCP_PATH)
     shutil.copyfile(ROOT / MIGRATION_PATH, tmpdir / MIGRATION_PATH)

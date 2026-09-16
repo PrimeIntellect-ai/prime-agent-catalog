@@ -2,8 +2,8 @@
 """Build a local distributable catalog bundle.
 
 The build output is intentionally untracked. The editable source of truth remains:
-- catalog/models.v1.json
-- catalog/mcp-services.v2.json
+- models/catalog.v1.json
+- plugins/catalog.v2.json
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ import validate_catalogs
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
-CATALOGS = [Path("catalog/models.v1.json"), Path("catalog/mcp-services.v2.json")]
+CATALOGS = [Path("models/catalog.v1.json"), Path("plugins/catalog.v2.json")]
 
 
 def main() -> int:
