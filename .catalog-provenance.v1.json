@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"catalogs": [
+		{
+			"path": "catalog/models.v1.json",
+			"bytes": 548754,
+			"sha256": "238eedb13e770e3ec51d9f72849507e07cc6e8030fdb0c21804e54e241fd1a47",
+			"source": {
+				"repository": "PrimeIntellect-ai/prime-agent",
+				"pullRequest": 2138,
+				"sourceRef": "feat/eng-5982-live-model-catalog",
+				"sourceCommit": "1089d8d1bd3ab183c4a73c60ee78033b43c81ab8",
+				"sourcePath": "catalog/models.v1.json",
+				"sourceUrl": "https://github.com/PrimeIntellect-ai/prime-agent/blob/1089d8d1bd3ab183c4a73c60ee78033b43c81ab8/catalog/models.v1.json"
+			}
+		},
+		{
+			"path": "catalog/mcp-services.v2.json",
+			"bytes": 155970,
+			"sha256": "adacb5f57f18c548bb95c04faa48de12f5e91d4dbe0be0d28ffdd6d4dfe2882a",
+			"source": {
+				"repository": "PrimeIntellect-ai/prime-agent",
+				"sourceRef": "main",
+				"sourceCommit": "b6ac5d014d99401b55820835a4966584271e9a3c",
+				"sourcePath": "packages/ai/src/mcp/catalog.json",
+				"sourceUrl": "https://github.com/PrimeIntellect-ai/prime-agent/blob/b6ac5d014d99401b55820835a4966584271e9a3c/packages/ai/src/mcp/catalog.json"
+			}
+		}
+	]
+}
