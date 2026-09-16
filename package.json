@@ -6,6 +6,6 @@
   "scripts": {
     "validate": "python3 scripts/validate_catalogs.py",
     "build": "python3 scripts/build_catalogs.py",
-    "test": "python3 scripts/validate_catalogs.py"
+    "test": "python3 scripts/validate_catalogs.py && python3 scripts/test_mutation_validation.py"
   }
 }
