@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Validate Prime Agent public catalog artifacts.
 
-The editable sources of truth are models/catalog.v1.json, plugins/index.json,
-and plugins/entries/<server>.json. plugins/catalog.v2.json is a generated
-aggregate: this script does not rewrite it, but it does fail when the committed
-aggregate drifts from its sources. It checks envelope compatibility,
+The editable sources of truth are models/providers/<provider>.json,
+plugins/index.json, and plugins/entries/<server>.json. models/catalog.v1.json
+and plugins/catalog.v2.json are generated aggregates: this script does not
+rewrite them, but it does fail when a committed aggregate drifts from its
+sources. It checks envelope compatibility,
 consumer-facing schema shape, deterministic ordering, bounded size/counts, URL
 safety, and basic secret hygiene.
 """
@@ -22,10 +23,12 @@ from urllib.parse import parse_qsl, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 
 MODEL_CATALOG = Path("models/catalog.v1.json")
+MODELS_PROVIDERS_DIR = Path("models/providers")
 MCP_CATALOG = Path("plugins/catalog.v2.json")
 PLUGINS_INDEX = Path("plugins/index.json")
 PLUGINS_ENTRIES_DIR = Path("plugins/entries")
 MAX_ENTRY_FILE_BYTES = 128_000
+MAX_MODEL_PROVIDER_FILE_BYTES = 512_000
 
 MAX_BYTES = {
     MODEL_CATALOG: 2_000_000,
@@ -51,6 +54,7 @@ HEX_40 = re.compile(r"^[0-9a-f]{40}$")
 SAFE_REL_PATH = re.compile(r"^[A-Za-z0-9._/-]+$")
 CONTROL_CHARS = re.compile(r"[\u0000-\u001f\u007f-\u009f]")
 SERVER_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
+PROVIDER_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SECRET_QUERY_NAMES = ("token", "secret", "password", "api_key", "apikey", "access_key", "client_secret")
 
 THINKING_LEVEL_KEYS = {"off", "minimal", "low", "medium", "high", "xhigh", "max"}
@@ -352,6 +356,65 @@ def _validate_compat(api: str, compat: Any, location: str, errors: list[str]) ->
         _error(errors, location, "compat is only valid for supported compatible API types")
 
 
+def _validate_model_entry(model: Any, location: str, errors: list[str]) -> tuple[str, str] | None:
+    if not isinstance(model, dict):
+        _error(errors, location, "model must be an object")
+        return None
+    _require_keys(model, MODEL_REQUIRED_KEYS, location, errors)
+    _reject_extra_keys(model, MODEL_KEYS, location, errors)
+    model_id = model.get("id")
+    provider = model.get("provider")
+    api = model.get("api")
+    if not _is_clean_string(model_id, 1, 1_024):
+        _error(errors, location, "id must be a non-empty clean string <= 1024 chars")
+    if not _is_clean_string(model.get("name"), 1, 1_024):
+        _error(errors, location, "name must be a non-empty clean string <= 1024 chars")
+    if not _is_non_empty_string(api, 128):
+        _error(errors, location, "api must be a non-empty string <= 128 chars")
+    if not _is_non_empty_string(provider, 128):
+        _error(errors, location, "provider must be a non-empty string <= 128 chars")
+    base_url = model.get("baseUrl")
+    if not isinstance(base_url, str) or len(base_url) > 2_048:
+        _error(errors, location, "baseUrl must be a string <= 2048 chars")
+    elif base_url:
+        _check_url(base_url, f"{location}.baseUrl", errors)
+    if not isinstance(model.get("reasoning"), bool):
+        _error(errors, location, "reasoning must be boolean")
+    input_value = model.get("input")
+    if (
+        not isinstance(input_value, list)
+        or not (1 <= len(input_value) <= 2)
+        or not all(isinstance(item, str) and item in MODEL_INPUT_VALUES for item in input_value)
+    ):
+        _error(errors, location, "input must be an array of one or two values from text/image")
+    cost = model.get("cost")
+    if not isinstance(cost, dict) or list(cost.keys()) != COST_KEYS:
+        _error(errors, location, "cost must keep input/output/cacheRead/cacheWrite keys in order")
+    else:
+        for key, value in cost.items():
+            if not _bounded_number(value):
+                _error(errors, location, f"cost.{key} must be a bounded non-negative number")
+    for key in ("contextWindow", "maxTokens"):
+        if not _positive_int(model.get(key), 100_000_000):
+            _error(errors, location, f"{key} must be a positive integer <= 100000000")
+    thinking = model.get("thinkingLevelMap")
+    if thinking is not None:
+        if not isinstance(thinking, dict):
+            _error(errors, location, "thinkingLevelMap must be an object")
+        else:
+            _reject_extra_keys(thinking, THINKING_LEVEL_KEYS, f"{location}.thinkingLevelMap", errors)
+            for key, value in thinking.items():
+                if value is not None and not _is_non_empty_string(value, 128):
+                    _error(errors, location, f"thinkingLevelMap.{key} must be null or a non-empty string <= 128 chars")
+    if "featured" in model and not isinstance(model["featured"], bool):
+        _error(errors, location, "featured must be boolean")
+    if "compat" in model and isinstance(api, str):
+        _validate_compat(api, model["compat"], location, errors)
+    if isinstance(provider, str) and isinstance(model_id, str):
+        return provider, model_id
+    return None
+
+
 def _validate_model_catalog(data: Any, errors: list[str]) -> None:
     path = MODEL_CATALOG
     if not isinstance(data, dict):
@@ -371,63 +434,11 @@ def _validate_model_catalog(data: Any, errors: list[str]) -> None:
     provider_ids: list[tuple[str, str]] = []
     providers: list[str] = []
     for index, model in enumerate(models):
-        location = f"{path}:models[{index}]"
-        if not isinstance(model, dict):
-            _error(errors, location, "model must be an object")
-            continue
-        _require_keys(model, MODEL_REQUIRED_KEYS, location, errors)
-        _reject_extra_keys(model, MODEL_KEYS, location, errors)
-        model_id = model.get("id")
-        provider = model.get("provider")
-        api = model.get("api")
-        if not _is_clean_string(model_id, 1, 1_024):
-            _error(errors, location, "id must be a non-empty clean string <= 1024 chars")
-        if not _is_clean_string(model.get("name"), 1, 1_024):
-            _error(errors, location, "name must be a non-empty clean string <= 1024 chars")
-        if not _is_non_empty_string(api, 128):
-            _error(errors, location, "api must be a non-empty string <= 128 chars")
-        if not _is_non_empty_string(provider, 128):
-            _error(errors, location, "provider must be a non-empty string <= 128 chars")
-        if isinstance(provider, str) and isinstance(model_id, str):
+        result = _validate_model_entry(model, f"{path}:models[{index}]", errors)
+        if result is not None:
+            provider, model_id = result
             provider_ids.append((provider, model_id))
             providers.append(provider)
-        base_url = model.get("baseUrl")
-        if not isinstance(base_url, str) or len(base_url) > 2_048:
-            _error(errors, location, "baseUrl must be a string <= 2048 chars")
-        elif base_url:
-            _check_url(base_url, f"{location}.baseUrl", errors)
-        if not isinstance(model.get("reasoning"), bool):
-            _error(errors, location, "reasoning must be boolean")
-        input_value = model.get("input")
-        if (
-            not isinstance(input_value, list)
-            or not (1 <= len(input_value) <= 2)
-            or not all(isinstance(item, str) and item in MODEL_INPUT_VALUES for item in input_value)
-        ):
-            _error(errors, location, "input must be an array of one or two values from text/image")
-        cost = model.get("cost")
-        if not isinstance(cost, dict) or list(cost.keys()) != COST_KEYS:
-            _error(errors, location, "cost must keep input/output/cacheRead/cacheWrite keys in order")
-        else:
-            for key, value in cost.items():
-                if not _bounded_number(value):
-                    _error(errors, location, f"cost.{key} must be a bounded non-negative number")
-        for key in ("contextWindow", "maxTokens"):
-            if not _positive_int(model.get(key), 100_000_000):
-                _error(errors, location, f"{key} must be a positive integer <= 100000000")
-        thinking = model.get("thinkingLevelMap")
-        if thinking is not None:
-            if not isinstance(thinking, dict):
-                _error(errors, location, "thinkingLevelMap must be an object")
-            else:
-                _reject_extra_keys(thinking, THINKING_LEVEL_KEYS, f"{location}.thinkingLevelMap", errors)
-                for key, value in thinking.items():
-                    if value is not None and not _is_non_empty_string(value, 128):
-                        _error(errors, location, f"thinkingLevelMap.{key} must be null or a non-empty string <= 128 chars")
-        if "featured" in model and not isinstance(model["featured"], bool):
-            _error(errors, location, "featured must be boolean")
-        if "compat" in model and isinstance(api, str):
-            _validate_compat(api, model["compat"], location, errors)
 
     duplicates = [item for item, count in Counter(provider_ids).items() if count > 1]
     if duplicates:
@@ -850,6 +861,66 @@ def _validate_mcp_catalog(data: Any, errors: list[str]) -> None:
 	_check_entry_cross_rules(counters, len(entries), counts, path, errors)
 
 
+def _validate_models_sources(errors: list[str]) -> None:
+    """Validate models/providers/, then fail on aggregate drift."""
+    providers_full = ROOT / MODELS_PROVIDERS_DIR
+    if not providers_full.is_dir():
+        _error(errors, MODELS_PROVIDERS_DIR, "directory missing")
+        return
+    items = sorted(providers_full.iterdir())
+    for item in items:
+        if item.is_dir() or item.suffix != ".json":
+            _error(errors, MODELS_PROVIDERS_DIR, f"must contain only JSON files; found {item.name}")
+    json_files = [item for item in items if item.suffix == ".json" and not item.is_dir()]
+    if not (1 <= len(json_files) <= 500):
+        _error(errors, MODELS_PROVIDERS_DIR, f"provider file count {len(json_files)} outside 1..500")
+        return
+
+    provider_ids: list[tuple[str, str]] = []
+    for item in json_files:
+        rel = MODELS_PROVIDERS_DIR / item.name
+        provider = item.stem
+        if not PROVIDER_NAME_PATTERN.match(provider):
+            _error(errors, rel, "provider file name must match ^[a-z0-9][a-z0-9-]*$")
+        if item.stat().st_size > MAX_MODEL_PROVIDER_FILE_BYTES:
+            _error(errors, rel, f"file is over the {MAX_MODEL_PROVIDER_FILE_BYTES} byte limit")
+        data = _read_json(rel, errors)
+        if data is None:
+            continue
+        _check_canonical_json(rel, data, errors)
+        _check_urls_and_secrets(rel, data, errors)
+        if not isinstance(data, list):
+            _error(errors, rel, "provider source must be an array")
+            continue
+        if not (1 <= len(data) <= MAX_COUNTS["models"]):
+            _error(errors, rel, f"model count {len(data)} outside 1..{MAX_COUNTS['models']}")
+        seen_ids: set[str] = set()
+        for index, model in enumerate(data):
+            location = f"{rel}:models[{index}]"
+            result = _validate_model_entry(model, location, errors)
+            if result is None:
+                continue
+            model_provider, model_id = result
+            if model_provider != provider:
+                _error(errors, location, f"provider must match file name {provider!r}")
+            if model_id in seen_ids:
+                _error(errors, rel, f"duplicate model id {model_id!r}")
+            seen_ids.add(model_id)
+            provider_ids.append((model_provider, model_id))
+
+    duplicates = [item for item, count in Counter(provider_ids).items() if count > 1]
+    if duplicates:
+        _error(errors, MODELS_PROVIDERS_DIR, f"duplicate provider/id pairs: {duplicates[:20]}")
+
+    try:
+        import generate_models_catalog
+
+        for message in generate_models_catalog.check(ROOT):
+            _error(errors, "models", message)
+    except Exception as exc:
+        _error(errors, "models", f"catalog generation failed: {exc}")
+
+
 def _validate_plugins_sources(errors: list[str]) -> None:
 	"""Validate plugins/index.json and plugins/entries/, then fail on aggregate drift."""
 	if not (ROOT / PLUGINS_INDEX).exists():
@@ -911,9 +982,10 @@ def validate(root: Path = ROOT) -> list[str]:
     ROOT = root.resolve()
     errors: list[str] = []
 
-    models_json = sorted(str(p.relative_to(ROOT)) for p in (ROOT / "models").glob("*.json")) if (ROOT / "models").exists() else []
-    if models_json != [str(MODEL_CATALOG)]:
-        _error(errors, "models", f"expected exactly one model catalog JSON file {str(MODEL_CATALOG)!r}, found {models_json!r}")
+    models_root = ROOT / "models"
+    model_items = sorted(item.name for item in models_root.iterdir()) if models_root.exists() else []
+    if model_items != ["catalog.v1.json", "providers"]:
+        _error(errors, "models", f"expected exactly {str(MODEL_CATALOG)!r} and {str(MODELS_PROVIDERS_DIR)!r}, found {model_items!r}")
     plugins_catalog = (ROOT / MCP_CATALOG).exists()
     if not plugins_catalog:
         _error(errors, "plugins", f"missing stable plugins catalog {str(MCP_CATALOG)!r}")
@@ -930,6 +1002,7 @@ def validate(root: Path = ROOT) -> list[str]:
         _validate_model_catalog(models, errors)
     if mcp is not None:
         _validate_mcp_catalog(mcp, errors)
+    _validate_models_sources(errors)
     _validate_plugins_sources(errors)
 
     return errors

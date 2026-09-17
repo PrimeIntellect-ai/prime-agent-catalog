@@ -14,22 +14,25 @@ here unless the consumer contract changes first.
 | `plugins/catalog.v2.json` | `{ "version": 2, "sources": [...], "counts": {...}, "entries": [...] }` |
 
 These are the only files Prime Agent fetches, and their paths and payloads are
-the client contract. `models/catalog.v1.json` is hand-editable. The plugins
-aggregate is GENERATED from `plugins/entries/<server>.json` plus
-`plugins/index.json` (envelope metadata) by `scripts/generate_plugins_catalog.py`;
+the client contract. `models/catalog.v1.json` is GENERATED from
+`models/providers/<provider>.json` by `scripts/generate_models_catalog.py`. The
+plugins aggregate is GENERATED from `plugins/entries/<server>.json` plus
+`plugins/index.json` (envelope metadata) by `scripts/generate_plugins_catalog.py`.
 CI rejects a committed aggregate that drifts from its sources.
 
 ## File layout
 
 ```text
 models/
-  catalog.v1.json         # model catalog payload, schemaVersion 1 (hand-editable)
+  providers/              # EDITABLE truth: one <provider>.json model array per provider
+  catalog.v1.json         # GENERATED aggregate; the stable client artifact
 plugins/
   entries/                # EDITABLE truth: one <server>.json per MCP service
   index.json              # EDITABLE truth: version + sources envelope metadata
   catalog.v2.json         # GENERATED aggregate; the stable client artifact
   examples/               # local-services authoring example for users
 scripts/
+  generate_models_catalog.py      # builds models/catalog.v1.json from sources; --check = drift gate
   generate_plugins_catalog.py     # builds plugins/catalog.v2.json from sources; --check = drift gate
   validate_catalogs.py            # self-contained validation, Python stdlib only
   test_mutation_validation.py     # negative mutation tests for validator coverage
@@ -45,8 +48,13 @@ package.json
 
 - JSON parses cleanly.
 - Top-level envelopes and versions stay compatible.
-- `models/` holds exactly the one model catalog JSON file, and the stable
-  plugins payload exists at `plugins/catalog.v2.json`.
+- `models/` holds exactly `models/catalog.v1.json` and `models/providers/`, and
+  the stable plugins payload exists at `plugins/catalog.v2.json`.
+- Each `models/providers/<provider>.json` is named after its provider id, holds
+  a canonical model array, uses provider ids matching `^[a-z0-9][a-z0-9-]*$`,
+  has no duplicate model ids in the file, validates each model entry, and the
+  committed `models/catalog.v1.json` equals the aggregate regenerated from
+  `models/providers/` (drift fails CI).
 - Each `plugins/entries/<server>.json` is named after its server id, validates
   as a catalog entry, and the committed `plugins/catalog.v2.json` equals the
   aggregate regenerated from `plugins/entries/` + `plugins/index.json`
@@ -67,14 +75,15 @@ package.json
 `python3 scripts/test_mutation_validation.py` mutates temporary copies of the
 catalog state and asserts the validator rejects duplicate ids, bad versions,
 embedded secrets, credential and private URLs, OAuth client secrets, malformed
-transports, count/order drift, a stale generated aggregate, hand-edited
-aggregates, filename/server mismatches, and deleted entry files.
+transports, count/order drift, stale generated aggregates, hand-edited
+aggregates, filename/server/provider mismatches, and deleted source files.
 
 ## Local commands
 
 ```bash
-python3 -m py_compile scripts/validate_catalogs.py scripts/generate_plugins_catalog.py scripts/test_mutation_validation.py
+python3 -m py_compile scripts/validate_catalogs.py scripts/generate_models_catalog.py scripts/generate_plugins_catalog.py scripts/test_mutation_validation.py
 python3 scripts/validate_catalogs.py
+python3 scripts/generate_models_catalog.py --check
 python3 scripts/generate_plugins_catalog.py --check
 python3 scripts/test_mutation_validation.py
 ```
@@ -93,8 +102,10 @@ No npm dependencies are required.
 
 Models:
 
-1. Edit `models/catalog.v1.json` directly.
+1. Edit the provider file under `models/providers/<provider>.json`.
 2. Keep the file in canonical tab-indented JSON form.
+3. Run `python3 scripts/generate_models_catalog.py` and commit the regenerated
+   `models/catalog.v1.json` together with the provider source edit.
 
 Plugins:
 
@@ -106,12 +117,12 @@ Plugins:
 
 Both:
 
-3. Run `python3 scripts/validate_catalogs.py`.
-4. Run `python3 scripts/test_mutation_validation.py` if validation rules changed.
+1. Run `python3 scripts/validate_catalogs.py`.
+2. Run `python3 scripts/test_mutation_validation.py` if validation rules changed.
 
-Aggregate shards are permitted exactly as implemented here: per-entry source
-files plus a generated, CI drift-checked aggregate. Do not add other shards
-without the same drift gate.
+Aggregate shards are permitted exactly as implemented here: per-provider or
+per-entry source files plus a generated, CI drift-checked aggregate. Do not add
+other shards without the same drift gate.
 
 ## History
 

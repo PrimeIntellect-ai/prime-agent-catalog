@@ -1,0 +1,100 @@
+[
+	{
+		"id": "k3",
+		"name": "Kimi K3",
+		"api": "anthropic-messages",
+		"provider": "kimi-coding",
+		"baseUrl": "https://api.kimi.com/coding",
+		"reasoning": true,
+		"thinkingLevelMap": {
+			"off": null,
+			"minimal": null,
+			"low": null,
+			"medium": null,
+			"high": null,
+			"xhigh": null,
+			"max": "max"
+		},
+		"input": [
+			"text",
+			"image"
+		],
+		"cost": {
+			"input": 0,
+			"output": 0,
+			"cacheRead": 0,
+			"cacheWrite": 0
+		},
+		"contextWindow": 1048576,
+		"maxTokens": 131072
+	},
+	{
+		"id": "k3-256k",
+		"name": "Kimi K3-256K",
+		"api": "anthropic-messages",
+		"provider": "kimi-coding",
+		"baseUrl": "https://api.kimi.com/coding",
+		"reasoning": true,
+		"thinkingLevelMap": {
+			"off": null,
+			"minimal": null,
+			"low": null,
+			"medium": null,
+			"high": null,
+			"xhigh": null,
+			"max": "max"
+		},
+		"input": [
+			"text",
+			"image"
+		],
+		"cost": {
+			"input": 0,
+			"output": 0,
+			"cacheRead": 0,
+			"cacheWrite": 0
+		},
+		"contextWindow": 262144,
+		"maxTokens": 131072
+	},
+	{
+		"id": "kimi-for-coding",
+		"name": "Kimi K2.7 Code",
+		"api": "anthropic-messages",
+		"provider": "kimi-coding",
+		"baseUrl": "https://api.kimi.com/coding",
+		"reasoning": true,
+		"input": [
+			"text",
+			"image"
+		],
+		"cost": {
+			"input": 0,
+			"output": 0,
+			"cacheRead": 0,
+			"cacheWrite": 0
+		},
+		"contextWindow": 262144,
+		"maxTokens": 32768
+	},
+	{
+		"id": "kimi-for-coding-highspeed",
+		"name": "Kimi For Coding HighSpeed",
+		"api": "anthropic-messages",
+		"provider": "kimi-coding",
+		"baseUrl": "https://api.kimi.com/coding",
+		"reasoning": true,
+		"input": [
+			"text",
+			"image"
+		],
+		"cost": {
+			"input": 0,
+			"output": 0,
+			"cacheRead": 0,
+			"cacheWrite": 0
+		},
+		"contextWindow": 262144,
+		"maxTokens": 32768
+	}
+]

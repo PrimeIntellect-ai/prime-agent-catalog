@@ -20,6 +20,7 @@ import validate_catalogs
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = Path("models/catalog.v1.json")
+MODEL_PROVIDERS_DIR = Path("models/providers")
 MCP_PATH = Path("plugins/catalog.v2.json")
 INDEX_PATH = Path("plugins/index.json")
 ENTRIES_DIR = Path("plugins/entries")
@@ -31,6 +32,10 @@ class Ctx:
 	def __init__(self, root: Path) -> None:
 		self.root = root
 		self.models = json.loads((root / MODEL_PATH).read_text(encoding="utf-8"))
+		self.model_providers = {
+			item.stem: json.loads(item.read_text(encoding="utf-8"))
+			for item in sorted((root / MODEL_PROVIDERS_DIR).glob("*.json"))
+		}
 		self.mcp = json.loads((root / MCP_PATH).read_text(encoding="utf-8"))
 		self.index = json.loads((root / INDEX_PATH).read_text(encoding="utf-8"))
 		self.entries = {
@@ -43,6 +48,8 @@ class Ctx:
 			path.write_text(json.dumps(data, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8")
 
 		dump(self.root / MODEL_PATH, self.models)
+		for provider, models in self.model_providers.items():
+			dump(self.root / MODEL_PROVIDERS_DIR / f"{provider}.json", models)
 		dump(self.root / MCP_PATH, self.mcp)
 		dump(self.root / INDEX_PATH, self.index)
 		for stem, entry in self.entries.items():
@@ -50,8 +57,10 @@ class Ctx:
 
 
 def _prepare_root(tmpdir: Path) -> None:
-	(tmpdir / "models").mkdir()
+	(tmpdir / "models" / "providers").mkdir(parents=True)
 	shutil.copyfile(ROOT / MODEL_PATH, tmpdir / MODEL_PATH)
+	for item in sorted((ROOT / MODEL_PROVIDERS_DIR).glob("*.json")):
+		shutil.copyfile(item, tmpdir / MODEL_PROVIDERS_DIR / item.name)
 	(tmpdir / "plugins" / "entries").mkdir(parents=True)
 	shutil.copyfile(ROOT / MCP_PATH, tmpdir / MCP_PATH)
 	shutil.copyfile(ROOT / INDEX_PATH, tmpdir / INDEX_PATH)
@@ -77,8 +86,34 @@ def _first_entry(ctx: Ctx) -> str:
 	return sorted(ctx.entries)[0]
 
 
+def _first_model_provider(ctx: Ctx) -> str:
+	return sorted(ctx.model_providers)[0]
+
+
 def duplicate_model_id(ctx: Ctx) -> None:
 	ctx.models["models"].insert(1, copy.deepcopy(ctx.models["models"][0]))
+
+
+def stale_models_aggregate(ctx: Ctx) -> None:
+	"""Edit a provider source without regenerating the committed aggregate."""
+	provider = _first_model_provider(ctx)
+	ctx.model_providers[provider][0]["name"] = "Renamed Without Regenerate"
+
+
+def hand_edited_models_aggregate(ctx: Ctx) -> None:
+	"""Edit the committed aggregate without touching provider sources."""
+	ctx.models["models"][0]["name"] = "Hand Edited Aggregate"
+
+
+def provider_filename_mismatch(ctx: Ctx) -> None:
+	provider = _first_model_provider(ctx)
+	ctx.model_providers[provider][0]["provider"] = "renamed-provider-id"
+
+
+def deleted_provider_file(ctx: Ctx) -> None:
+	provider = _first_model_provider(ctx)
+	del ctx.model_providers[provider]
+	(ctx.root / MODEL_PROVIDERS_DIR / f"{provider}.json").unlink()
 
 
 def duplicate_mcp_server(ctx: Ctx) -> None:
@@ -158,6 +193,10 @@ def deleted_entry_file(ctx: Ctx) -> None:
 
 CASES: list[tuple[str, Callable[[Ctx], None]]] = [
 	("duplicate-model-id", duplicate_model_id),
+	("stale-models-aggregate", stale_models_aggregate),
+	("hand-edited-models-aggregate", hand_edited_models_aggregate),
+	("provider-filename-mismatch", provider_filename_mismatch),
+	("deleted-provider-file", deleted_provider_file),
 	("duplicate-mcp-server", duplicate_mcp_server),
 	("bad-catalog-version", bad_catalog_version),
 	("bad-plugins-index-version", bad_plugins_index_version),
