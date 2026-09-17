@@ -11,38 +11,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp.clickhouse.cloud",
-			"resource": "https://mcp.clickhouse.cloud/mcp",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"mcp:access",
-				"openid",
-				"profile",
-				"email"
-			],
-			"authorizationServerScopes": [
-				"mcp:access",
-				"clickstack:access",
-				"openid",
-				"profile",
-				"email"
-			],
-			"tokenAuthMethods": [
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.clickhouse.cloud/mcp",
-				"https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.clickhouse.cloud/.well-known/oauth-protected-resource",
-				"https://mcp.clickhouse.cloud/.well-known/oauth-authorization-server",
-				"https://mcp.clickhouse.cloud/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -54,10 +23,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/ClickHouse/clickhouse-claude-code-plugin.git",
-			"commit": "988a7a39834af9c9e14ec3650365243e2cfc6882",
-			"url": "https://raw.githubusercontent.com/ClickHouse/clickhouse-claude-code-plugin/988a7a39834af9c9e14ec3650365243e2cfc6882/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

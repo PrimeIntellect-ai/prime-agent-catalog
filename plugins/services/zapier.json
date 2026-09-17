@@ -11,37 +11,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp.zapier.com",
-			"resource": "https://mcp.zapier.com/api/v1/connect",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"openid",
-				"profile",
-				"email"
-			],
-			"authorizationServerScopes": [
-				"openid",
-				"profile",
-				"email"
-			],
-			"tokenAuthMethods": [
-				"none",
-				"client_secret_post",
-				"client_secret_basic"
-			],
-			"sourceUrls": [
-				"https://mcp.zapier.com/api/v1/connect",
-				"https://mcp.zapier.com/.well-known/oauth-protected-resource/api/v1/connect",
-				"https://mcp.zapier.com/.well-known/oauth-protected-resource",
-				"https://mcp.zapier.com/.well-known/oauth-authorization-server",
-				"https://mcp.zapier.com/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -53,11 +23,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/zapier/zapier-mcp.git",
-			"commit": "217d65a980f9b75536babf89ba64bf03ad95beea",
-			"path": "plugins/zapier",
-			"url": "https://raw.githubusercontent.com/zapier/zapier-mcp/217d65a980f9b75536babf89ba64bf03ad95beea/plugins/zapier/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

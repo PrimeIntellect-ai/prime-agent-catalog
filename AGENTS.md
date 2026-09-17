@@ -13,7 +13,6 @@ models/
   admission-manifest.v1.json      # GENERATED admitted id manifest; CI sync-review surface
 plugins/
   services/<server>.json          # EDITABLE truth: one MCP service entry per file
-  index.json                      # EDITABLE truth: version + sources envelope
   catalog.v2.json                 # GENERATED aggregate; the client-fetched plugin artifact
   examples/                       # user-facing local-services authoring example
 scripts/
@@ -33,10 +32,11 @@ SECURITY.md                       # production trust boundary + required repo se
 - The old `models/providers/` layer is gone. `scripts/generate_models_catalog.py` is retired.
 - The admission manifest is the CI id-set accident check and the sync review surface. It records the exact admitted ids per provider in aggregate order.
 - Never hand-edit `models/catalog.v1.json` or `models/admission-manifest.v1.json`. Hand-editing the aggregate without a sync run fails CI via manifest mismatch.
-- Plugins: edit `plugins/services/<server>.json` (or `plugins/index.json` for envelope metadata), then regenerate.
+- Plugins: edit `plugins/services/<server>.json`, then regenerate. `scripts/generate_plugins_catalog.py` hardcodes `PLUGINS_CATALOG_VERSION = 2`; there is no `plugins/index.json`.
 - Never hand-edit `plugins/catalog.v2.json`; it is regenerated and drift fails CI.
 - All JSON is canonical: tab-indented, deterministic key order, trailing newline. YAML is parsed only by the Prime Agent TypeScript exporter, not by this repository's Python tooling.
 - Each `models/*/<provider>.yml` file is per provider. Each `plugins/services/<server>.json` file is one connector = one server id; several files can share a service brand (for example, the zoom family: `zoom`, `zoom-chat`, `zoom-meetings`, `zoom-tasks`, `zoom-whiteboard`, and `zoom-canvas` all carry `service: zoom`).
+- Plugin source files keep only working client data; the import-time audit dossier (`sources`, `auth.metadata`, `auth.alternatives`, detailed provenance) was stripped because git history preserves the audit evidence.
 
 ## Commands
 
@@ -54,7 +54,7 @@ npm test            # validate + mutation tests
 `scripts/validate_catalogs.py` checks:
 
 - JSON parses; envelopes and versions stay compatible.
-- `models/` top-level JSON files are exactly `models/catalog.v1.json` and `models/admission-manifest.v1.json`; plugin service files are named after their server ids.
+- `models/` top-level JSON files are exactly `models/catalog.v1.json` and `models/admission-manifest.v1.json`; plugin service files are named after their server ids, and `plugins/` top-level JSON files are exactly `catalog.v2.json`.
 - The admission manifest has canonical form, provider names match `^[a-z0-9][a-z0-9-]*$`, and every per-provider id list matches the aggregate ids in the same order.
 - Model entries match the consumer schema: allowed keys, limits, compat shapes.
 - MCP entries match the transport, auth, setup, verification, and provenance shape.
@@ -62,7 +62,7 @@ npm test            # validate + mutation tests
 - URLs are HTTPS, carry no credentials or fragments, and never point at literal loopback/private/link-local hosts.
 - No OAuth client ids or secrets anywhere; secret-pattern scan on all payloads.
 
-`scripts/test_mutation_validation.py` mutates fresh copies and asserts the validator rejects: duplicate ids, model request headers, bad versions, embedded secrets, credential and private URLs, OAuth client id/secret, malformed transports, count/order drift, stale plugin aggregates, hand-edited aggregates, manifest missing/extra/order-drift ids, filename mismatches, and deleted plugin source files.
+`scripts/test_mutation_validation.py` mutates fresh copies and asserts the validator rejects: duplicate ids, model request headers, bad versions, embedded secrets, credential and private URLs, OAuth client id/secret, malformed transports, count/order drift, stale plugin aggregates, hand-edited aggregates, manifest missing/extra/order-drift ids, filename mismatches, deleted plugin source files, stripped dossier fields, top-level `sources`, and missing provenance.
 
 ## Syncing from provider catalog endpoints
 

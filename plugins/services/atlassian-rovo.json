@@ -12,53 +12,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://auth.atlassian.com/VCeDsk8ZHncYF1g234fKtc4lNipbBhu3",
-			"resource": "https://mcp.atlassian.com/v1/mcp/authv2",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"clientIdMetadataDocument": true,
-			"protectedResourceScopes": [
-				"read:me",
-				"read:account",
-				"offline_access",
-				"email",
-				"read:jira-work",
-				"write:jira-work",
-				"search:confluence",
-				"read:confluence-user",
-				"read:page:confluence",
-				"write:page:confluence",
-				"read:comment:confluence",
-				"write:comment:confluence",
-				"read:space:confluence",
-				"read:hierarchical-content:confluence",
-				"write:component:compass",
-				"read:component:compass",
-				"read:scorecard:compass",
-				"write:scorecard:compass",
-				"read:event:compass",
-				"read:metric:compass",
-				"read:all:twg",
-				"write:all:twg"
-			],
-			"tokenAuthMethods": [
-				"none",
-				"client_secret_post",
-				"client_secret_basic",
-				"private_key_jwt"
-			],
-			"sourceUrls": [
-				"https://mcp.atlassian.com/v1/mcp/authv2",
-				"https://mcp.atlassian.com/.well-known/oauth-protected-resource/v1/mcp/authv2",
-				"https://mcp.atlassian.com/.well-known/oauth-protected-resource",
-				"https://auth.atlassian.com/.well-known/oauth-authorization-server/VCeDsk8ZHncYF1g234fKtc4lNipbBhu3",
-				"https://auth.atlassian.com/VCeDsk8ZHncYF1g234fKtc4lNipbBhu3/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -70,12 +24,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "openai-plugins",
-			"repository": "openai/plugins",
-			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
-			"path": "plugins/atlassian-rovo/.mcp.json",
-			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/atlassian-rovo/.mcp.json",
-			"license": "MIT"
+			"source": "prime"
 		}
 	],
 	"homepage": "https://www.atlassian.com",

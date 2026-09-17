@@ -3,7 +3,7 @@
 
 The editable model sync sources are models/whitelist/<provider>.yml and
 models/manual/<provider>.yml, parsed only by the TypeScript exporter.
-plugins/index.json and plugins/services/<server>.json are editable plugin sources.
+plugins/services/<server>.json files are editable plugin sources.
 models/catalog.v1.json, models/admission-manifest.v1.json, and
 plugins/catalog.v2.json are generated artifacts: this script does not rewrite
 them. It checks envelope compatibility, consumer-facing schema shape,
@@ -25,7 +25,6 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL_CATALOG = Path("models/catalog.v1.json")
 MODEL_ADMISSION_MANIFEST = Path("models/admission-manifest.v1.json")
 MCP_CATALOG = Path("plugins/catalog.v2.json")
-PLUGINS_INDEX = Path("plugins/index.json")
 PLUGINS_SERVICES_DIR = Path("plugins/services")
 MAX_ENTRY_FILE_BYTES = 128_000
 
@@ -37,7 +36,6 @@ MAX_BYTES = {
 MAX_COUNTS = {
     "models": 20_000,
     "mcp_entries": 500,
-    "mcp_sources": 50,
 }
 MAX_STRING = 4096
 
@@ -114,9 +112,7 @@ SETUP_STATUSES = {"ready", "requires-setup"}
 READINESS_STATES = {"oauth-ready", "user-setup", "prime-restricted", "unknown"}
 SETUP_REQUIREMENTS = {"api-key", "bearer-token", "registered-client", "tenant", "unsupported-transport", "local-runtime"}
 SETUP_FIELD_KINDS = {"env-var", "url", "client-id", "client-secret", "bearer-token", "api-key"}
-AUTH_ALTERNATIVE_KINDS = {"oauth", "api-key", "bearer-token", "service-account"}
-AUTH_METADATA_STATUSES = {"available", "unavailable", "not-audited"}
-PROVENANCE_SOURCES = {"openai-plugins", "claude-plugins-official", "prime", "user"}
+PROVENANCE_SOURCES = {"prime", "user"}
 MCP_ENTRY_KEYS = {
     "server",
     "service",
@@ -150,13 +146,10 @@ COUNTS_KEYS = [
     "metadataReviewed",
     "oauthStrategy",
     "apiKeyStrategy",
-    "mergedFromBothSources",
     "readinessOauthReady",
     "readinessUserSetup",
     "readinessPrimeRestricted",
     "readinessUnknown",
-    "metadataAvailable",
-    "metadataUnavailable",
 ]
 
 
@@ -590,12 +583,12 @@ def _validate_transport(entry: dict[str, Any], location: str, errors: list[str],
     return transport_type
 
 
-def _validate_auth(entry: dict[str, Any], location: str, errors: list[str], auth_strategy: Counter[str], metadata_status: Counter[str]) -> None:
+def _validate_auth(entry: dict[str, Any], location: str, errors: list[str], auth_strategy: Counter[str]) -> None:
     auth = entry.get("auth")
     if not isinstance(auth, dict):
         _error(errors, location, "auth must be an object")
         return
-    _reject_extra_keys(auth, {"strategy", "clientRegistration", "reviewedScopes", "alternatives", "metadata"}, f"{location}.auth", errors)
+    _reject_extra_keys(auth, {"strategy", "clientRegistration", "reviewedScopes"}, f"{location}.auth", errors)
     strategy = auth.get("strategy")
     if not isinstance(strategy, str) or strategy not in AUTH_STRATEGIES:
         _error(errors, location, "auth.strategy must be one of oauth/api_key/none/unknown")
@@ -606,70 +599,6 @@ def _validate_auth(entry: dict[str, Any], location: str, errors: list[str], auth
         _error(errors, location, "auth.clientRegistration must be one of dynamic/pre-registered/unknown")
     if "reviewedScopes" in auth:
         _validate_string_array(auth["reviewedScopes"], f"{location}.auth.reviewedScopes", errors)
-    if "alternatives" in auth:
-        alternatives = auth["alternatives"]
-        if not isinstance(alternatives, list):
-            _error(errors, location, "auth.alternatives must be an array")
-        else:
-            for index, alternative in enumerate(alternatives):
-                aloc = f"{location}.auth.alternatives[{index}]"
-                if not isinstance(alternative, dict):
-                    _error(errors, aloc, "alternative must be an object")
-                    continue
-                _reject_extra_keys(alternative, {"kind", "readiness", "note", "sourceUrl"}, aloc, errors)
-                if alternative.get("kind") not in AUTH_ALTERNATIVE_KINDS:
-                    _error(errors, aloc, "kind has an unsupported value")
-                if alternative.get("readiness") not in READINESS_STATES:
-                    _error(errors, aloc, "readiness has an unsupported value")
-                if "sourceUrl" in alternative and isinstance(alternative["sourceUrl"], str):
-                    _check_url(alternative["sourceUrl"], f"{aloc}.sourceUrl", errors)
-    if "metadata" in auth:
-        metadata = auth["metadata"]
-        if not isinstance(metadata, dict):
-            _error(errors, location, "auth.metadata must be an object")
-            return
-        _reject_extra_keys(
-            metadata,
-            {
-                "status",
-                "authorizationServer",
-                "resource",
-                "pkceS256",
-                "dynamicClientRegistration",
-                "clientIdMetadataDocument",
-                "protectedResourceScopes",
-                "authorizationServerScopes",
-                "tokenAuthMethods",
-                "sourceUrls",
-                "fetchedAt",
-                "note",
-            },
-            f"{location}.auth.metadata",
-            errors,
-        )
-        status = metadata.get("status")
-        if status not in AUTH_METADATA_STATUSES:
-            _error(errors, location, "auth.metadata.status has an unsupported value")
-        elif isinstance(status, str):
-            metadata_status[status] += 1
-        for key in ("authorizationServer", "resource"):
-            if key in metadata:
-                if not isinstance(metadata[key], str):
-                    _error(errors, location, f"auth.metadata.{key} must be a string")
-                elif metadata[key]:
-                    _check_url(metadata[key], f"{location}.auth.metadata.{key}", errors)
-        for key in ("pkceS256", "dynamicClientRegistration", "clientIdMetadataDocument"):
-            if key in metadata and not isinstance(metadata[key], bool):
-                _error(errors, location, f"auth.metadata.{key} must be boolean")
-        for key in ("protectedResourceScopes", "authorizationServerScopes", "tokenAuthMethods"):
-            if key in metadata:
-                _validate_string_array(metadata[key], f"{location}.auth.metadata.{key}", errors)
-        source_urls = metadata.get("sourceUrls")
-        urls = _validate_string_array(source_urls, f"{location}.auth.metadata.sourceUrls", errors, non_empty=True)
-        for index, source_url in enumerate(urls):
-            _check_url(source_url, f"{location}.auth.metadata.sourceUrls[{index}]", errors)
-        if not _is_non_empty_string(metadata.get("fetchedAt")):
-            _error(errors, location, "auth.metadata.fetchedAt must be a non-empty string")
 
 
 def _validate_setup(entry: dict[str, Any], location: str, errors: list[str], setup_status: Counter[str], setup_readiness: Counter[str]) -> None:
@@ -724,29 +653,8 @@ def _new_counters() -> dict[str, Any]:
 		"setup_status": Counter(),
 		"setup_readiness": Counter(),
 		"auth_strategy": Counter(),
-		"metadata_status": Counter(),
 		"verification_status": Counter(),
-		"merged_from_both_sources": 0,
 	}
-
-
-def _validate_sources(sources: Any, path: Path, errors: list[str]) -> None:
-	if not isinstance(sources, list) or not (1 <= len(sources) <= MAX_COUNTS["mcp_sources"]):
-		_error(errors, path, "sources must be a bounded non-empty array")
-		return
-	for index, source in enumerate(sources):
-		location = f"{path}:sources[{index}]"
-		if not isinstance(source, dict):
-			_error(errors, location, "source must be an object")
-			continue
-		if list(source.keys()) != ["source", "repository", "commit"]:
-			_error(errors, location, "source keys must be ['source', 'repository', 'commit']")
-		if not _is_non_empty_string(source.get("source"), 128):
-			_error(errors, location, "source must be a non-empty bounded string")
-		if not _is_non_empty_string(source.get("repository"), 256):
-			_error(errors, location, "repository must be a non-empty bounded string")
-		if not isinstance(source.get("commit"), str) or not HEX_40.match(source["commit"]):
-			_error(errors, location, "commit must be a 40-character lowercase SHA-1")
 
 
 def _validate_mcp_entry(entry: Any, location: str, errors: list[str], counters: dict[str, Any]) -> None:
@@ -788,7 +696,7 @@ def _validate_mcp_entry(entry: Any, location: str, errors: list[str], counters: 
 			previous = alias
 	if not isinstance(entry.get("legacyBuiltin"), bool):
 		_error(errors, location, "legacyBuiltin must be boolean")
-	_validate_auth(entry, location, errors, counters["auth_strategy"], counters["metadata_status"])
+	_validate_auth(entry, location, errors, counters["auth_strategy"])
 	_validate_setup(entry, location, errors, counters["setup_status"], counters["setup_readiness"])
 	verification = entry.get("verification")
 	if not isinstance(verification, dict) or list(verification.keys()) != ["status"]:
@@ -817,28 +725,15 @@ def _validate_mcp_entry(entry: Any, location: str, errors: list[str], counters: 
 	if not isinstance(provenance, list) or not provenance:
 		_error(errors, location, "provenance must be a non-empty array")
 	else:
-		provenance_sources = set()
 		for p_index, item in enumerate(provenance):
 			p_location = f"{location}.provenance[{p_index}]"
 			if not isinstance(item, dict):
 				_error(errors, p_location, "provenance item must be an object")
 				continue
-			_reject_extra_keys(item, {"source", "repository", "commit", "path", "url", "license", "note"}, p_location, errors)
+			if list(item.keys()) != ["source"]:
+				_error(errors, p_location, "provenance item keys must be ['source'] in that order")
 			if item.get("source") not in PROVENANCE_SOURCES:
 				_error(errors, p_location, "provenance.source has an unsupported value")
-			elif isinstance(item.get("source"), str):
-				provenance_sources.add(item["source"])
-			if "commit" in item and (not isinstance(item["commit"], str) or not HEX_40.match(item["commit"])):
-				_error(errors, p_location, "provenance.commit must be a 40-character lowercase SHA-1")
-			if "path" in item and (not isinstance(item["path"], str) or not SAFE_REL_PATH.match(item["path"])):
-				_error(errors, p_location, "provenance.path must be a safe relative path")
-			if "url" in item:
-				if isinstance(item["url"], str):
-					_check_url(item["url"], f"{p_location}.url", errors)
-				else:
-					_error(errors, p_location, "provenance.url must be a string")
-		if {"openai-plugins", "claude-plugins-official"}.issubset(provenance_sources):
-			counters["merged_from_both_sources"] += 1
 
 
 def _check_entry_cross_rules(
@@ -873,13 +768,10 @@ def _check_entry_cross_rules(
 		"metadataReviewed": counters["verification_status"]["metadata-reviewed"],
 		"oauthStrategy": counters["auth_strategy"]["oauth"],
 		"apiKeyStrategy": counters["auth_strategy"]["api_key"],
-		"mergedFromBothSources": counters["merged_from_both_sources"],
 		"readinessOauthReady": counters["setup_readiness"]["oauth-ready"],
 		"readinessUserSetup": counters["setup_readiness"]["user-setup"],
 		"readinessPrimeRestricted": counters["setup_readiness"]["prime-restricted"],
 		"readinessUnknown": counters["setup_readiness"]["unknown"],
-		"metadataAvailable": counters["metadata_status"]["available"],
-		"metadataUnavailable": counters["metadata_status"]["unavailable"],
 	}
 	for key, expected in expected_counts.items():
 		actual = counts.get(key) if isinstance(counts, dict) else None
@@ -892,14 +784,12 @@ def _validate_mcp_catalog(data: Any, errors: list[str]) -> None:
 	if not isinstance(data, dict):
 		_error(errors, path, "top-level value must be an object")
 		return
-	if list(data.keys()) != ["version", "sources", "counts", "entries"]:
-		_error(errors, path, "top-level keys must remain ['version', 'sources', 'counts', 'entries'] in that order")
+	if list(data.keys()) != ["version", "counts", "entries"]:
+		_error(errors, path, "top-level keys must remain ['version', 'counts', 'entries'] in that order")
 	if data.get("version") != 2:
 		_error(errors, path, "version must be 2")
-	sources = data.get("sources")
 	counts = data.get("counts")
 	entries = data.get("entries")
-	_validate_sources(sources, path, errors)
 	if not isinstance(counts, dict):
 		_error(errors, path, "counts must be an object")
 		counts = {}
@@ -930,22 +820,15 @@ def _validate_models_sources(errors: list[str]) -> None:
 
 
 def _validate_plugins_sources(errors: list[str]) -> None:
-	"""Validate plugins/index.json and plugins/services/, then fail on aggregate drift."""
-	if not (ROOT / PLUGINS_INDEX).exists():
-		_error(errors, PLUGINS_INDEX, "missing")
-	else:
-		index = _read_json(PLUGINS_INDEX, errors)
-		if index is not None:
-			_check_canonical_json(PLUGINS_INDEX, index, errors)
-			_check_urls_and_secrets(PLUGINS_INDEX, index, errors)
-			if not isinstance(index, dict):
-				_error(errors, PLUGINS_INDEX, "index must be an object")
-			else:
-				if list(index.keys()) != ["version", "sources"]:
-					_error(errors, PLUGINS_INDEX, "index keys must be ['version', 'sources'] in that order")
-				if index.get("version") != 2:
-					_error(errors, PLUGINS_INDEX, "version must be 2")
-				_validate_sources(index.get("sources"), PLUGINS_INDEX, errors)
+	"""Validate plugins/services/, then fail on aggregate drift."""
+	plugins_full = ROOT / "plugins"
+	if not plugins_full.is_dir():
+		_error(errors, "plugins", "directory missing")
+		return
+	json_files = sorted(item.name for item in plugins_full.iterdir() if item.is_file() and item.suffix == ".json")
+	expected = [MCP_CATALOG.name]
+	if json_files != expected:
+		_error(errors, "plugins", f"top-level JSON files must be exactly {expected!r}, found {json_files!r}")
 
 	entries_full = ROOT / PLUGINS_SERVICES_DIR
 	if not entries_full.is_dir():

@@ -14,31 +14,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://api.vanta.com/mcp",
-			"resource": "https://mcp.eu.vanta.com",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"mcp-api.all:write"
-			],
-			"authorizationServerScopes": [
-				"mcp-api.all:write"
-			],
-			"tokenAuthMethods": [
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.eu.vanta.com/mcp",
-				"https://mcp.eu.vanta.com/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.eu.vanta.com/.well-known/oauth-protected-resource",
-				"https://api.vanta.com/.well-known/oauth-authorization-server/mcp",
-				"https://api.vanta.com/mcp/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -50,20 +26,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/VantaInc/vanta-mcp-plugin.git",
-			"commit": "345d86b55faa649e955b7ea5569cf52d8425c2d5",
-			"url": "https://raw.githubusercontent.com/VantaInc/vanta-mcp-plugin/345d86b55faa649e955b7ea5569cf52d8425c2d5/.mcp.json"
-		},
-		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/VantaInc/vanta-mcp-plugin.git",
-			"commit": "345d86b55faa649e955b7ea5569cf52d8425c2d5",
-			"url": "https://raw.githubusercontent.com/VantaInc/vanta-mcp-plugin/345d86b55faa649e955b7ea5569cf52d8425c2d5/.mcp.json"
-		},
-		{
-			"source": "prime",
-			"note": "curated override applied; see mcp-catalog/overrides.json"
+			"source": "prime"
 		}
 	]
 }

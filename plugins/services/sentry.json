@@ -13,40 +13,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp.sentry.dev",
-			"resource": "https://mcp.sentry.dev/mcp",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"clientIdMetadataDocument": true,
-			"protectedResourceScopes": [
-				"org:read",
-				"project:write",
-				"team:write",
-				"event:write"
-			],
-			"authorizationServerScopes": [
-				"org:read",
-				"project:write",
-				"team:write",
-				"event:write"
-			],
-			"tokenAuthMethods": [
-				"client_secret_basic",
-				"client_secret_post",
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.sentry.dev/mcp",
-				"https://mcp.sentry.dev/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.sentry.dev/.well-known/oauth-protected-resource",
-				"https://mcp.sentry.dev/.well-known/oauth-authorization-server",
-				"https://mcp.sentry.dev/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -58,18 +25,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "openai-plugins",
-			"repository": "openai/plugins",
-			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
-			"path": "plugins/sentry/.mcp.json",
-			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/sentry/.mcp.json",
-			"license": "MIT"
-		},
-		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/getsentry/plugin-claude.git",
-			"commit": "73e53541d7af21672e27428c7067f4264b8a3d65",
-			"url": "https://raw.githubusercontent.com/getsentry/plugin-claude/73e53541d7af21672e27428c7067f4264b8a3d65/.claude-plugin/plugin.json"
+			"source": "prime"
 		}
 	],
 	"homepage": "https://sentry.io/",

@@ -11,26 +11,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp.intercom.com",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"tokenAuthMethods": [
-				"client_secret_basic",
-				"client_secret_post",
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.intercom.com/mcp",
-				"https://mcp.intercom.com/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.intercom.com/.well-known/oauth-protected-resource",
-				"https://mcp.intercom.com/.well-known/oauth-authorization-server",
-				"https://mcp.intercom.com/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -42,10 +23,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/intercom/claude-plugin-external.git",
-			"commit": "62773a7d4b8aac31545d6888fe6479be3bc53804",
-			"url": "https://raw.githubusercontent.com/intercom/claude-plugin-external/62773a7d4b8aac31545d6888fe6479be3bc53804/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

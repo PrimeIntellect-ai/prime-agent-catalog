@@ -13,53 +13,7 @@
 	},
 	"auth": {
 		"strategy": "oauth",
-		"clientRegistration": "unknown",
-		"alternatives": [
-			{
-				"kind": "api-key",
-				"readiness": "user-setup",
-				"note": "Airtable also documents personal access tokens as a distinct API access path; OAuth dynamic client registration is the default route for the MCP server",
-				"sourceUrl": "https://airtable.com/developers/agents/mcp/getting-started"
-			}
-		],
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://airtable.com/oauth2/v1",
-			"resource": "https://mcp.airtable.com",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"clientIdMetadataDocument": true,
-			"protectedResourceScopes": [
-				"data.records:read",
-				"data.records:write",
-				"schema.bases:read",
-				"schema.bases:write",
-				"data.recordComments:read",
-				"data.recordComments:write",
-				"workspacesAndBases:read"
-			],
-			"authorizationServerScopes": [
-				"data.records:read",
-				"data.records:write",
-				"schema.bases:read",
-				"schema.bases:write",
-				"data.recordComments:read",
-				"data.recordComments:write",
-				"workspacesAndBases:read"
-			],
-			"tokenAuthMethods": [
-				"client_secret_basic",
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.airtable.com/mcp",
-				"https://mcp.airtable.com/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.airtable.com/.well-known/oauth-protected-resource",
-				"https://airtable.com/.well-known/oauth-authorization-server/oauth2/v1",
-				"https://airtable.com/oauth2/v1/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -71,22 +25,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "openai-plugins",
-			"repository": "openai/plugins",
-			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
-			"path": "plugins/airtable/.mcp.json",
-			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/airtable/.mcp.json"
-		},
-		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/Airtable/skills.git",
-			"commit": "812ee67f1fd3d76fb45ff8df40afaa0448602ba8",
-			"path": "plugins/airtable",
-			"url": "https://raw.githubusercontent.com/Airtable/skills/812ee67f1fd3d76fb45ff8df40afaa0448602ba8/plugins/airtable/.mcp.json"
-		},
-		{
-			"source": "prime",
-			"note": "placeholder-only upstream OAuth blocks cleared: provider docs confirm OAuth for the Airtable MCP server and the committed audit evidence confirms a live registration endpoint"
+			"source": "prime"
 		}
 	],
 	"homepage": "https://airtable.com",

@@ -12,38 +12,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp-auth.granola.ai",
-			"resource": "https://mcp.granola.ai/mcp",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"clientIdMetadataDocument": true,
-			"protectedResourceScopes": [
-				"mcp"
-			],
-			"authorizationServerScopes": [
-				"email",
-				"offline_access",
-				"openid",
-				"profile"
-			],
-			"tokenAuthMethods": [
-				"none",
-				"client_secret_post",
-				"client_secret_basic",
-				"private_key_jwt"
-			],
-			"sourceUrls": [
-				"https://mcp.granola.ai/mcp",
-				"https://mcp.granola.ai/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.granola.ai/.well-known/oauth-protected-resource",
-				"https://mcp-auth.granola.ai/.well-known/oauth-authorization-server",
-				"https://mcp-auth.granola.ai/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -55,12 +24,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "openai-plugins",
-			"repository": "openai/plugins",
-			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
-			"path": "plugins/granola/.mcp.json",
-			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/granola/.mcp.json",
-			"license": "MIT"
+			"source": "prime"
 		}
 	],
 	"homepage": "https://www.granola.ai",

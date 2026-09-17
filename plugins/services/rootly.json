@@ -11,65 +11,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://rootly.com",
-			"resource": "https://mcp.rootly.com",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"openid",
-				"profile",
-				"email",
-				"all"
-			],
-			"authorizationServerScopes": [
-				"profile",
-				"email",
-				"all",
-				"ir.all",
-				"oc.all",
-				"ir.incidents:read",
-				"ir.incidents:write",
-				"ir.services:read",
-				"ir.services:write",
-				"ir.environments:read",
-				"ir.environments:write",
-				"ir.functionalities:read",
-				"ir.functionalities:write",
-				"ir.severities:read",
-				"ir.severities:write",
-				"ir.incident_types:read",
-				"ir.incident_types:write",
-				"ir.incident_roles:read",
-				"ir.incident_roles:write",
-				"ir.workflows:read",
-				"ir.workflows:write",
-				"ir.catalogs:read",
-				"ir.catalogs:write",
-				"ir.groups:read",
-				"ir.groups:write",
-				"ir.playbooks:read",
-				"ir.playbooks:write",
-				"ir.retrospectives:read",
-				"ir.retrospectives:write",
-				"ir.status_pages:read"
-			],
-			"tokenAuthMethods": [
-				"none",
-				"client_secret_post",
-				"client_secret_basic"
-			],
-			"sourceUrls": [
-				"https://mcp.rootly.com/mcp",
-				"https://mcp.rootly.com/.well-known/oauth-protected-resource",
-				"https://mcp.rootly.com/.well-known/oauth-protected-resource/mcp",
-				"https://rootly.com/.well-known/oauth-authorization-server",
-				"https://rootly.com/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -81,10 +23,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/Rootly-AI-Labs/rootly-claude-plugin.git",
-			"commit": "65832aa6ff7a7b39c6bd64899a7a64646e3948ed",
-			"url": "https://raw.githubusercontent.com/Rootly-AI-Labs/rootly-claude-plugin/65832aa6ff7a7b39c6bd64899a7a64646e3948ed/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

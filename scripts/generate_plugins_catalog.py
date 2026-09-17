@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Generate the plugins service catalog aggregate from service source files.
 
-The editable source of truth is `plugins/services/<server>.json` plus
-`plugins/index.json` (envelope metadata). This script deterministically builds
-`plugins/catalog.v2.json` — the stable client-consumed artifact — and fails
-closed on malformed sources. Run with --check to compare against the committed
-aggregate without writing (CI drift gate).
+The editable source of truth is `plugins/services/<server>.json`. This script
+deterministically builds `plugins/catalog.v2.json` — the stable
+client-consumed artifact — and fails closed on malformed sources. Run with
+--check to compare against the committed aggregate without writing (CI drift
+gate).
 """
 
 from __future__ import annotations
@@ -19,13 +19,12 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-INDEX_PATH = Path("plugins/index.json")
 SERVICES_DIR = Path("plugins/services")
 OUTPUT_PATH = Path("plugins/catalog.v2.json")
+PLUGINS_CATALOG_VERSION = 2
 
 MAX_ENTRY_FILE_BYTES = 128_000
 MAX_ENTRIES = 500
-MAX_SOURCES = 50
 SERVER_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 COUNTS_KEYS = [
     "total",
@@ -38,18 +37,15 @@ COUNTS_KEYS = [
     "metadataReviewed",
     "oauthStrategy",
     "apiKeyStrategy",
-    "mergedFromBothSources",
     "readinessOauthReady",
     "readinessUserSetup",
     "readinessPrimeRestricted",
     "readinessUnknown",
-    "metadataAvailable",
-    "metadataUnavailable",
 ]
 
 
 def _canonical(data: Any) -> str:
-    return json.dumps(data, indent="\t", ensure_ascii=False) + "\n"
+    return json.dumps(data, indent="	", ensure_ascii=False) + "\n"
 
 
 def _fail(message: str) -> None:
@@ -60,18 +56,6 @@ def _read_json_bounded(path: Path) -> Any:
     if path.stat().st_size > MAX_ENTRY_FILE_BYTES:
         _fail(f"{path.name} is over the {MAX_ENTRY_FILE_BYTES} byte limit")
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def load_index(root: Path) -> dict[str, Any]:
-    index = _read_json_bounded(root / INDEX_PATH)
-    if not isinstance(index, dict) or list(index.keys()) != ["version", "sources"]:
-        _fail(f"{INDEX_PATH} must carry keys ['version', 'sources'] in that order")
-    if index["version"] != 2:
-        _fail(f"{INDEX_PATH} version must be 2")
-    sources = index["sources"]
-    if not isinstance(sources, list) or not (1 <= len(sources) <= MAX_SOURCES):
-        _fail(f"{INDEX_PATH} sources must be a bounded non-empty array")
-    return index
 
 
 def load_entries(root: Path) -> list[dict[str, Any]]:
@@ -107,9 +91,7 @@ def compute_counts(entries: list[dict[str, Any]]) -> dict[str, int]:
     setup_status = Counter()
     setup_readiness = Counter()
     auth_strategy = Counter()
-    metadata_status = Counter()
     verification_status = Counter()
-    merged_from_both_sources = 0
     for entry in entries:
         transport_obj = entry.get("transport")
         if isinstance(transport_obj, dict) and isinstance(transport_obj.get("type"), str):
@@ -121,20 +103,11 @@ def compute_counts(entries: list[dict[str, Any]]) -> dict[str, int]:
             if isinstance(setup.get("readiness"), str):
                 setup_readiness[setup["readiness"]] += 1
         auth = entry.get("auth")
-        if isinstance(auth, dict):
-            if isinstance(auth.get("strategy"), str):
-                auth_strategy[auth["strategy"]] += 1
-            metadata = auth.get("metadata")
-            if isinstance(metadata, dict) and isinstance(metadata.get("status"), str):
-                metadata_status[metadata["status"]] += 1
+        if isinstance(auth, dict) and isinstance(auth.get("strategy"), str):
+            auth_strategy[auth["strategy"]] += 1
         verification = entry.get("verification")
         if isinstance(verification, dict) and isinstance(verification.get("status"), str):
             verification_status[verification["status"]] += 1
-        provenance = entry.get("provenance")
-        if isinstance(provenance, list):
-            provenance_sources = {item.get("source") for item in provenance if isinstance(item, dict)}
-            if {"openai-plugins", "claude-plugins-official"}.issubset(provenance_sources):
-                merged_from_both_sources += 1
     counts = {
         "total": len(entries),
         "http": transport["http"],
@@ -146,13 +119,10 @@ def compute_counts(entries: list[dict[str, Any]]) -> dict[str, int]:
         "metadataReviewed": verification_status["metadata-reviewed"],
         "oauthStrategy": auth_strategy["oauth"],
         "apiKeyStrategy": auth_strategy["api_key"],
-        "mergedFromBothSources": merged_from_both_sources,
         "readinessOauthReady": setup_readiness["oauth-ready"],
         "readinessUserSetup": setup_readiness["user-setup"],
         "readinessPrimeRestricted": setup_readiness["prime-restricted"],
         "readinessUnknown": setup_readiness["unknown"],
-        "metadataAvailable": metadata_status["available"],
-        "metadataUnavailable": metadata_status["unavailable"],
     }
     if list(counts.keys()) != COUNTS_KEYS:
         _fail("internal error: computed counts do not match COUNTS_KEYS order")
@@ -160,11 +130,9 @@ def compute_counts(entries: list[dict[str, Any]]) -> dict[str, int]:
 
 
 def build_catalog(root: Path = ROOT) -> dict[str, Any]:
-    index = load_index(root)
     entries = sorted(load_entries(root), key=lambda entry: entry["server"])
     return {
-        "version": index["version"],
-        "sources": index["sources"],
+        "version": PLUGINS_CATALOG_VERSION,
         "counts": compute_counts(entries),
         "entries": entries,
     }
@@ -185,7 +153,7 @@ def check(root: Path = ROOT) -> list[str]:
         return [f"{SERVICES_DIR}: {exc}"]
     if committed != expected:
         return [
-            f"{OUTPUT_PATH}: does not match the catalog generated from {SERVICES_DIR} and {INDEX_PATH}; "
+            f"{OUTPUT_PATH}: does not match the catalog generated from {SERVICES_DIR}; "
             "run scripts/generate_plugins_catalog.py and commit the result"
         ]
     return []

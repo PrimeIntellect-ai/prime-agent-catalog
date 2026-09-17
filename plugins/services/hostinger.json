@@ -11,27 +11,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://auth.hostinger.com",
-			"resource": "https://mcp.hostinger.com",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"mcp:use"
-			],
-			"tokenAuthMethods": [
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.hostinger.com",
-				"https://mcp.hostinger.com/.well-known/oauth-protected-resource",
-				"https://auth.hostinger.com/.well-known/oauth-authorization-server",
-				"https://auth.hostinger.com/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -43,10 +23,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/hostinger/claude-plugin.git",
-			"commit": "569880c60681a7068b3ca8ca84e2fe7ab6cfa7ff",
-			"url": "https://raw.githubusercontent.com/hostinger/claude-plugin/569880c60681a7068b3ca8ca84e2fe7ab6cfa7ff/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

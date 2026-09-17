@@ -23,7 +23,6 @@ ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = Path("models/catalog.v1.json")
 MANIFEST_PATH = Path("models/admission-manifest.v1.json")
 MCP_PATH = Path("plugins/catalog.v2.json")
-INDEX_PATH = Path("plugins/index.json")
 SERVICES_DIR = Path("plugins/services")
 
 
@@ -35,7 +34,6 @@ class Ctx:
 		self.models = json.loads((root / MODEL_PATH).read_text(encoding="utf-8"))
 		self.manifest = json.loads((root / MANIFEST_PATH).read_text(encoding="utf-8"))
 		self.mcp = json.loads((root / MCP_PATH).read_text(encoding="utf-8"))
-		self.index = json.loads((root / INDEX_PATH).read_text(encoding="utf-8"))
 		self.entries = {
 			item.stem: json.loads(item.read_text(encoding="utf-8"))
 			for item in sorted((root / SERVICES_DIR).glob("*.json"))
@@ -43,12 +41,11 @@ class Ctx:
 
 	def write_back(self) -> None:
 		def dump(path: Path, data: Any) -> None:
-			path.write_text(json.dumps(data, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8")
+			path.write_text(json.dumps(data, indent="	", ensure_ascii=False) + "\n", encoding="utf-8")
 
 		dump(self.root / MODEL_PATH, self.models)
 		dump(self.root / MANIFEST_PATH, self.manifest)
 		dump(self.root / MCP_PATH, self.mcp)
-		dump(self.root / INDEX_PATH, self.index)
 		for stem, entry in self.entries.items():
 			dump(self.root / SERVICES_DIR / f"{stem}.json", entry)
 
@@ -63,7 +60,6 @@ def _prepare_root(tmpdir: Path) -> None:
 			shutil.copyfile(item, tmpdir / "models" / dirname / item.name)
 	(tmpdir / "plugins" / "services").mkdir(parents=True)
 	shutil.copyfile(ROOT / MCP_PATH, tmpdir / MCP_PATH)
-	shutil.copyfile(ROOT / INDEX_PATH, tmpdir / INDEX_PATH)
 	for item in sorted((ROOT / SERVICES_DIR).glob("*.json")):
 		shutil.copyfile(item, tmpdir / SERVICES_DIR / item.name)
 
@@ -137,8 +133,8 @@ def bad_catalog_version(ctx: Ctx) -> None:
 	ctx.models["schemaVersion"] = 2
 
 
-def bad_plugins_index_version(ctx: Ctx) -> None:
-	ctx.index["version"] = 999
+def bad_plugins_catalog_version(ctx: Ctx) -> None:
+	ctx.mcp["version"] = 999
 
 
 def embedded_secret(ctx: Ctx) -> None:
@@ -173,6 +169,22 @@ def oauth_client_secret(ctx: Ctx) -> None:
 
 def malformed_transport(ctx: Ctx) -> None:
 	ctx.entries[_first_entry(ctx)]["transport"]["type"] = "httpTemplate"
+
+
+def entry_auth_metadata(ctx: Ctx) -> None:
+	ctx.entries[_first_entry(ctx)]["auth"]["metadata"] = {"status": "available"}
+
+
+def entry_auth_alternatives(ctx: Ctx) -> None:
+	ctx.entries[_first_entry(ctx)]["auth"]["alternatives"] = []
+
+
+def top_level_sources(ctx: Ctx) -> None:
+	ctx.mcp["sources"] = []
+
+
+def provenance_missing(ctx: Ctx) -> None:
+	del ctx.entries[_first_entry(ctx)]["provenance"]
 
 
 def count_drift(ctx: Ctx) -> None:
@@ -213,13 +225,17 @@ CASES: list[tuple[str, Callable[[Ctx], None]]] = [
 	("manifest-order-drift", manifest_order_drift),
 	("duplicate-mcp-server", duplicate_mcp_server),
 	("bad-catalog-version", bad_catalog_version),
-	("bad-plugins-index-version", bad_plugins_index_version),
+	("bad-plugins-catalog-version", bad_plugins_catalog_version),
 	("embedded-secret", embedded_secret),
 	("credential-url", credential_url),
 	("private-url", private_url),
 	("oauth-client-id", oauth_client_id),
 	("oauth-client-secret", oauth_client_secret),
 	("malformed-transport", malformed_transport),
+	("entry-auth-metadata", entry_auth_metadata),
+	("entry-auth-alternatives", entry_auth_alternatives),
+	("top-level-sources", top_level_sources),
+	("provenance-missing", provenance_missing),
 	("count-drift", count_drift),
 	("order-drift", order_drift),
 	("stale-aggregate", stale_aggregate),
