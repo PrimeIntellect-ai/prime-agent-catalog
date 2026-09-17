@@ -1,0 +1,57 @@
+{
+	"server": "sanity",
+	"service": "sanity",
+	"label": "Sanity",
+	"url": "https://mcp.sanity.io",
+	"aliases": [],
+	"publisher": "Sanity",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.sanity.io"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.sanity.io",
+			"resource": "https://mcp.sanity.io",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"global"
+			],
+			"authorizationServerScopes": [
+				"global"
+			],
+			"tokenAuthMethods": [
+				"client_secret_basic",
+				"client_secret_post",
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.sanity.io",
+				"https://mcp.sanity.io/.well-known/oauth-protected-resource",
+				"https://mcp.sanity.io/.well-known/oauth-authorization-server",
+				"https://mcp.sanity.io/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/sanity-io/agent-toolkit.git",
+			"commit": "8675ed36b5f5da950c3920c118d025cd1c94f58e",
+			"url": "https://raw.githubusercontent.com/sanity-io/agent-toolkit/8675ed36b5f5da950c3920c118d025cd1c94f58e/.mcp.json"
+		}
+	]
+}

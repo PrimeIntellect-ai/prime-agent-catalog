@@ -1,0 +1,116 @@
+{
+	"server": "appwrite",
+	"service": "appwrite",
+	"label": "Appwrite",
+	"url": "https://mcp.appwrite.io/",
+	"aliases": [],
+	"publisher": "Appwrite",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.appwrite.io/"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://fra.cloud.appwrite.io/v1/oauth2/console",
+			"resource": "https://mcp.appwrite.io/",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"clientIdMetadataDocument": true,
+			"protectedResourceScopes": [
+				"openid",
+				"profile",
+				"email",
+				"phone",
+				"all",
+				"project:all",
+				"organization:all",
+				"project:project.read",
+				"project:project.write",
+				"project:keys.read",
+				"project:keys.write",
+				"project:platforms.read",
+				"project:platforms.write",
+				"project:mocks.read",
+				"project:mocks.write",
+				"project:project.policies.read",
+				"project:project.policies.write",
+				"project:project.oauth2.read",
+				"project:project.oauth2.write",
+				"project:templates.read",
+				"project:templates.write",
+				"project:stages.read",
+				"project:stages.write",
+				"project:users.read",
+				"project:users.write",
+				"project:sessions.read",
+				"project:sessions.write",
+				"project:teams.read",
+				"project:teams.write",
+				"project:databases.read"
+			],
+			"authorizationServerScopes": [
+				"openid",
+				"profile",
+				"email",
+				"phone",
+				"all",
+				"project:all",
+				"organization:all",
+				"project:project.read",
+				"project:project.write",
+				"project:keys.read",
+				"project:keys.write",
+				"project:platforms.read",
+				"project:platforms.write",
+				"project:mocks.read",
+				"project:mocks.write",
+				"project:policies.read",
+				"project:policies.write",
+				"project:project.policies.read",
+				"project:project.policies.write",
+				"project:project.oauth2.read",
+				"project:project.oauth2.write",
+				"project:templates.read",
+				"project:templates.write",
+				"project:stages.read",
+				"project:stages.write",
+				"project:users.read",
+				"project:users.write",
+				"project:sessions.read",
+				"project:sessions.write",
+				"project:teams.read"
+			],
+			"tokenAuthMethods": [
+				"client_secret_post",
+				"client_secret_basic",
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.appwrite.io/",
+				"https://mcp.appwrite.io/.well-known/oauth-protected-resource",
+				"https://fra.cloud.appwrite.io/.well-known/oauth-authorization-server/v1/oauth2/console",
+				"https://fra.cloud.appwrite.io/v1/oauth2/console/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/appwrite/claude-plugin.git",
+			"commit": "ab3c90b37c95b7068f0c064dc562cf21958e8e19",
+			"url": "https://raw.githubusercontent.com/appwrite/claude-plugin/ab3c90b37c95b7068f0c064dc562cf21958e8e19/.mcp.json"
+		}
+	]
+}

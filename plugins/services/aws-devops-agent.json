@@ -1,0 +1,62 @@
+{
+	"server": "aws-devops-agent",
+	"service": "amazon-web-services",
+	"label": "AWS Agents for DevSecOps",
+	"url": "https://connect.aidevops.us-east-1.api.aws/mcp",
+	"aliases": [
+		"amazon-web-services",
+		"aws-agents-for-devsecops"
+	],
+	"publisher": "Amazon Web Services",
+	"transport": {
+		"type": "http",
+		"url": "https://connect.aidevops.us-east-1.api.aws/mcp"
+	},
+	"auth": {
+		"strategy": "api_key",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "unavailable",
+			"sourceUrls": [
+				"https://connect.aidevops.us-east-1.api.aws/mcp",
+				"https://connect.aidevops.us-east-1.api.aws/.well-known/oauth-protected-resource/mcp",
+				"https://connect.aidevops.us-east-1.api.aws/.well-known/oauth-protected-resource",
+				"https://connect.aidevops.us-east-1.api.aws/.well-known/oauth-authorization-server",
+				"https://connect.aidevops.us-east-1.api.aws/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "requires-setup",
+		"reason": "paste your AWS DevSecOps agent token (DEVOPS_AGENT_TOKEN)",
+		"fields": [
+			{
+				"id": "DEVOPS_AGENT_TOKEN",
+				"label": "DEVOPS_AGENT_TOKEN",
+				"description": "Environment variable DEVOPS_AGENT_TOKEN",
+				"required": true,
+				"kind": "bearer-token"
+			}
+		],
+		"requirement": "bearer-token",
+		"readiness": "user-setup"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/aws/agent-toolkit-for-aws.git",
+			"commit": "68d9e8541c45afd2510662bcea69fe1e433ea9db",
+			"path": "plugins/aws-agents-for-devsecops",
+			"url": "https://raw.githubusercontent.com/aws/agent-toolkit-for-aws/68d9e8541c45afd2510662bcea69fe1e433ea9db/plugins/aws-agents-for-devsecops/.mcp.json"
+		},
+		{
+			"source": "prime",
+			"note": "curated override applied; see mcp-catalog/overrides.json"
+		}
+	]
+}

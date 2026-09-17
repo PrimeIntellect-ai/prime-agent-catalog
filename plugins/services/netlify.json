@@ -1,0 +1,70 @@
+{
+	"server": "netlify",
+	"service": "netlify",
+	"label": "Netlify",
+	"url": "https://netlify-mcp.netlify.app/mcp",
+	"description": "Official Netlify MCP server (hosted, streamable HTTP). Authorizes via OAuth on first connection — the agent is prompted to sign in to Netlify; no token or local install required. Lets the agent create and manage Netlify projects, deploys, and environment variables.",
+	"aliases": [
+		"netlify-skills"
+	],
+	"publisher": "Netlify",
+	"transport": {
+		"type": "http",
+		"url": "https://netlify-mcp.netlify.app/mcp"
+	},
+	"auth": {
+		"strategy": "oauth",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://netlify-mcp.netlify.app/",
+			"resource": "https://netlify-mcp.netlify.app/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"offline_access",
+				"read",
+				"write",
+				"claudeai"
+			],
+			"authorizationServerScopes": [
+				"offline_access",
+				"read",
+				"write",
+				"claudeai"
+			],
+			"tokenAuthMethods": [
+				"none",
+				"client_secret_post",
+				"client_secret_basic"
+			],
+			"sourceUrls": [
+				"https://netlify-mcp.netlify.app/mcp",
+				"https://netlify-mcp.netlify.app/.well-known/oauth-protected-resource/mcp",
+				"https://netlify-mcp.netlify.app/.well-known/oauth-protected-resource",
+				"https://netlify-mcp.netlify.app/.well-known/oauth-authorization-server",
+				"https://netlify-mcp.netlify.app/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/netlify/context-and-tools.git",
+			"commit": "b4fd870cf2f1f4cc66b28ead16277e1d799b510f",
+			"url": "https://raw.githubusercontent.com/netlify/context-and-tools/b4fd870cf2f1f4cc66b28ead16277e1d799b510f/.mcp.json"
+		}
+	],
+	"oauth": {
+		"kind": "oauth"
+	}
+}

@@ -1,0 +1,50 @@
+{
+	"server": "codspeed",
+	"service": "codspeed",
+	"label": "CodSpeed",
+	"url": "https://mcp.codspeed.io/mcp",
+	"aliases": [],
+	"publisher": "CodSpeed",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.codspeed.io/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://api.codspeed.io",
+			"resource": "https://mcp.codspeed.io/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"tokenAuthMethods": [
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.codspeed.io/mcp",
+				"https://mcp.codspeed.io/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.codspeed.io/.well-known/oauth-protected-resource",
+				"https://api.codspeed.io/.well-known/oauth-authorization-server",
+				"https://api.codspeed.io/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/CodSpeedHQ/codspeed.git",
+			"commit": "37eba9ed92b0f1a17cf386303446475df380af37",
+			"url": "https://raw.githubusercontent.com/CodSpeedHQ/codspeed/37eba9ed92b0f1a17cf386303446475df380af37/.mcp.json"
+		}
+	]
+}

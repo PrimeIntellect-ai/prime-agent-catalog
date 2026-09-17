@@ -1,0 +1,69 @@
+{
+	"server": "granola",
+	"service": "granola",
+	"label": "Granola",
+	"url": "https://mcp.granola.ai/mcp",
+	"description": "Granola MCP connects your meeting history to ChatGPT so your assistant can pull real context from past conversations while you work.\n\nUse MCP when you're already working on something bigger:\n\n-   Writing PRDs or proposals: Pull customer feedback, stakeholder input, and decisions from relevant meetings directly into your draft\n    \n-   Building presentations or reports: Combine insights from multiple conversations with your other research and data\n    \n-   Coding with context: Give your AI the project background, requirements, and technical decisions discussed in planning meetings\n    \n-   Strategic analysis: Merge meeting insights with documents, data, and other sources for comprehensive analysis\n    \nHow it works:\n\nYour AI assistant can search your Granola meetings by topic, person, company, or timeframe - then cite specific conversations in its responses. No more switching tabs to find \"what the customer said\" or \"when we decided that.\"\n\nThe difference:\n\nInstead of copy-pasting meeting notes into prompts, your AI pulls exactly what it needs from your meeting history automatically. You stay focused on the work, not the research or context.",
+	"category": "Productivity",
+	"aliases": [],
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.granola.ai/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp-auth.granola.ai",
+			"resource": "https://mcp.granola.ai/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"clientIdMetadataDocument": true,
+			"protectedResourceScopes": [
+				"mcp"
+			],
+			"authorizationServerScopes": [
+				"email",
+				"offline_access",
+				"openid",
+				"profile"
+			],
+			"tokenAuthMethods": [
+				"none",
+				"client_secret_post",
+				"client_secret_basic",
+				"private_key_jwt"
+			],
+			"sourceUrls": [
+				"https://mcp.granola.ai/mcp",
+				"https://mcp.granola.ai/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.granola.ai/.well-known/oauth-protected-resource",
+				"https://mcp-auth.granola.ai/.well-known/oauth-authorization-server",
+				"https://mcp-auth.granola.ai/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "openai-plugins",
+			"repository": "openai/plugins",
+			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
+			"path": "plugins/granola/.mcp.json",
+			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/granola/.mcp.json",
+			"license": "MIT"
+		}
+	],
+	"homepage": "https://www.granola.ai",
+	"privacyUrl": "https://help.granola.ai/article/privacy-policy",
+	"supportUrl": "https://help.granola.ai/"
+}

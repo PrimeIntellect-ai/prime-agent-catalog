@@ -1,0 +1,7 @@
+# Admission policy for minimax.
+# source: minimax is the models.dev source slug used for this provider.
+source: "minimax"
+ids:
+  - "MiniMax-M2.7"
+  - "MiniMax-M2.7-highspeed"
+globs: []

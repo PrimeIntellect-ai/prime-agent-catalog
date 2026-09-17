@@ -1,0 +1,70 @@
+{
+	"server": "mapbox",
+	"service": "mapbox",
+	"label": "Mapbox",
+	"url": "https://mcp.mapbox.com/mcp",
+	"aliases": [],
+	"publisher": "Mapbox",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.mapbox.com/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.mapbox.com",
+			"resource": "https://mcp.mapbox.com/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"styles:tiles",
+				"styles:read",
+				"fonts:read",
+				"datasets:read",
+				"tokens:read"
+			],
+			"authorizationServerScopes": [
+				"styles:tiles",
+				"styles:read",
+				"fonts:read",
+				"datasets:read",
+				"tokens:read"
+			],
+			"tokenAuthMethods": [
+				"client_secret_post",
+				"client_secret_basic",
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.mapbox.com/mcp",
+				"https://mcp.mapbox.com/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.mapbox.com/.well-known/oauth-protected-resource",
+				"https://mcp.mapbox.com/.well-known/oauth-authorization-server",
+				"https://mcp.mapbox.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/mapbox/mapbox-agent-skills.git",
+			"commit": "209e8c408fd65edfff45e491c941e8a00025a1a6",
+			"url": "https://raw.githubusercontent.com/mapbox/mapbox-agent-skills/209e8c408fd65edfff45e491c941e8a00025a1a6/.mcp.json"
+		},
+		{
+			"source": "prime",
+			"note": "curated override applied; see mcp-catalog/overrides.json"
+		}
+	]
+}

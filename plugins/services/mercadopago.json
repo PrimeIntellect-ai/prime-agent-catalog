@@ -1,0 +1,64 @@
+{
+	"server": "mercadopago",
+	"service": "mercado-pago",
+	"label": "Mercado Pago",
+	"url": "https://mcp.mercadopago.com/mcp",
+	"aliases": [
+		"mcp",
+		"mercado-pago"
+	],
+	"publisher": "Mercado Pago",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.mercadopago.com/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.mercadopago.com/mcp",
+			"resource": "https://mcp.mercadopago.com/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"offline_access",
+				"write",
+				"read"
+			],
+			"authorizationServerScopes": [
+				"offline_access",
+				"write",
+				"read"
+			],
+			"tokenAuthMethods": [
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.mercadopago.com/mcp",
+				"https://mcp.mercadopago.com/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.mercadopago.com/.well-known/oauth-protected-resource",
+				"https://mcp.mercadopago.com/.well-known/oauth-authorization-server/mcp",
+				"https://mcp.mercadopago.com/mcp/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/mercadopago/mercadopago-claude-marketplace.git",
+			"commit": "c0d06959afc90b2f3d637c35eeb51c36f512c005",
+			"path": "plugins/mercadopago",
+			"url": "https://raw.githubusercontent.com/mercadopago/mercadopago-claude-marketplace/c0d06959afc90b2f3d637c35eeb51c36f512c005/plugins/mercadopago/.mcp.json"
+		}
+	]
+}

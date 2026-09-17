@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Validate catalogs
+        run: python3 scripts/validate_catalogs.py
+      - name: Check plugins catalog drift
+        run: python3 scripts/generate_plugins_catalog.py --check
+      - name: Run mutation validation tests
+        run: python3 scripts/test_mutation_validation.py

@@ -1,0 +1,60 @@
+{
+	"server": "aiven",
+	"service": "aiven",
+	"label": "Aiven",
+	"url": "https://mcp.aiven.live/mcp",
+	"aliases": [],
+	"publisher": "Aiven",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.aiven.live/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://api.aiven.io",
+			"resource": "https://mcp.aiven.live/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"projects",
+				"services",
+				"accounts:read"
+			],
+			"authorizationServerScopes": [
+				"projects",
+				"services",
+				"accounts:read"
+			],
+			"tokenAuthMethods": [
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.aiven.live/mcp",
+				"https://mcp.aiven.live/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.aiven.live/.well-known/oauth-protected-resource",
+				"https://api.aiven.io/.well-known/oauth-authorization-server",
+				"https://api.aiven.io/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/aiven/aiven-ai-plugins.git",
+			"commit": "634f41d6852957cb9280e9245f2ea6f74645b4f1",
+			"url": "https://raw.githubusercontent.com/aiven/aiven-ai-plugins/634f41d6852957cb9280e9245f2ea6f74645b4f1/.mcp.json"
+		}
+	]
+}

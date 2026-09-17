@@ -1,0 +1,106 @@
+{
+	"server": "github",
+	"service": "github",
+	"label": "GitHub",
+	"url": "https://api.githubcopilot.com/mcp/",
+	"description": "Inspect repositories, triage pull requests and issues, debug CI, and publish changes through a hybrid GitHub connector and CLI workflow.",
+	"category": "Developer Tools",
+	"aliases": [],
+	"publisher": "GitHub",
+	"transport": {
+		"type": "http",
+		"url": "https://api.githubcopilot.com/mcp/"
+	},
+	"auth": {
+		"strategy": "api_key",
+		"clientRegistration": "unknown",
+		"alternatives": [
+			{
+				"kind": "oauth",
+				"readiness": "unknown",
+				"note": "GitHub's MCP endpoint advertises standard OAuth (PKCE S256 observed) but no dynamic client registration; a Prime-controlled registered client is not established",
+				"sourceUrl": "https://github.com/login/oauth/.well-known/oauth-authorization-server"
+			}
+		],
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://github.com/login/oauth",
+			"resource": "https://api.githubcopilot.com/mcp/",
+			"pkceS256": true,
+			"protectedResourceScopes": [
+				"repo",
+				"read:org",
+				"read:user",
+				"user:email",
+				"read:packages",
+				"write:packages",
+				"read:project",
+				"project",
+				"gist",
+				"notifications"
+			],
+			"authorizationServerScopes": [
+				"offline_access"
+			],
+			"sourceUrls": [
+				"https://api.githubcopilot.com/mcp/",
+				"https://api.githubcopilot.com/.well-known/oauth-protected-resource/mcp/",
+				"https://api.githubcopilot.com/.well-known/oauth-protected-resource",
+				"https://github.com/.well-known/oauth-authorization-server/login/oauth",
+				"https://github.com/login/oauth/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "requires-setup",
+		"reason": "paste a GitHub personal access token (GITHUB_PAT_TOKEN or GITHUB_PERSONAL_ACCESS_TOKEN)",
+		"fields": [
+			{
+				"id": "GITHUB_PAT_TOKEN",
+				"label": "GITHUB_PAT_TOKEN",
+				"description": "Environment variable GITHUB_PAT_TOKEN",
+				"required": true,
+				"kind": "bearer-token",
+				"credentialSet": "github-pat"
+			},
+			{
+				"id": "GITHUB_PERSONAL_ACCESS_TOKEN",
+				"label": "GITHUB_PERSONAL_ACCESS_TOKEN",
+				"description": "Environment variable GITHUB_PERSONAL_ACCESS_TOKEN",
+				"required": true,
+				"kind": "bearer-token",
+				"credentialSet": "github-pat"
+			}
+		],
+		"requirement": "bearer-token",
+		"readiness": "user-setup"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "openai-plugins",
+			"repository": "openai/plugins",
+			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
+			"path": "plugins/github/.mcp.json",
+			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/github/.mcp.json",
+			"license": "MIT"
+		},
+		{
+			"source": "claude-plugins-official",
+			"repository": "anthropics/claude-plugins-official",
+			"commit": "3deb821cb71ccfaaf2ffa9935e977df314ce5cd5",
+			"path": "./external_plugins/github",
+			"url": "https://raw.githubusercontent.com/anthropics/claude-plugins-official/3deb821cb71ccfaaf2ffa9935e977df314ce5cd5/external_plugins/github/.mcp.json"
+		},
+		{
+			"source": "prime",
+			"note": "curated override applied; see mcp-catalog/overrides.json"
+		}
+	],
+	"homepage": "https://github.com/",
+	"privacyUrl": "https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement"
+}

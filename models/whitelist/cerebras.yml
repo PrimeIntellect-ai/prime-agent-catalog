@@ -1,0 +1,7 @@
+# Admission policy for cerebras.
+# source: cerebras is the models.dev source slug used for this provider.
+source: "cerebras"
+ids:
+  - "gemma-4-31b"
+  - "gpt-oss-120b"
+globs: []

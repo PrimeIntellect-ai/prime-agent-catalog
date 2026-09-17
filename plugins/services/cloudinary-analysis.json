@@ -1,0 +1,74 @@
+{
+	"server": "cloudinary-analysis",
+	"service": "cloudinary",
+	"label": "Cloudinary Analysis",
+	"url": "https://analysis.mcp.cloudinary.com/mcp",
+	"aliases": [
+		"cloudinary"
+	],
+	"publisher": "Cloudinary",
+	"transport": {
+		"type": "http",
+		"url": "https://analysis.mcp.cloudinary.com/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://analysis.mcp.cloudinary.com",
+			"resource": "https://analysis.mcp.cloudinary.com/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"openid",
+				"profile",
+				"email",
+				"offline_access",
+				"media_analysis",
+				"query_analysis_tasks"
+			],
+			"authorizationServerScopes": [
+				"openid",
+				"profile",
+				"email",
+				"offline_access",
+				"media_analysis",
+				"query_analysis_tasks"
+			],
+			"tokenAuthMethods": [
+				"client_secret_post",
+				"client_secret_basic",
+				"none"
+			],
+			"sourceUrls": [
+				"https://analysis.mcp.cloudinary.com/mcp",
+				"https://analysis.mcp.cloudinary.com/.well-known/oauth-protected-resource/mcp",
+				"https://analysis.mcp.cloudinary.com/.well-known/oauth-protected-resource",
+				"https://analysis.mcp.cloudinary.com/.well-known/oauth-authorization-server",
+				"https://analysis.mcp.cloudinary.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/cloudinary-devs/cloudinary-plugin.git",
+			"commit": "86be53409e3fb1c465cd5ff4d1dc937a2860f45c",
+			"url": "https://raw.githubusercontent.com/cloudinary-devs/cloudinary-plugin/86be53409e3fb1c465cd5ff4d1dc937a2860f45c/mcp.json"
+		},
+		{
+			"source": "prime",
+			"note": "curated override applied; see mcp-catalog/overrides.json"
+		}
+	]
+}

@@ -1,0 +1,12 @@
+# Admission policy for zai.
+# source: zai-coding-plan is the models.dev Z.ai coding-plan product.
+source: "zai-coding-plan"
+ids:
+  - "glm-4.7"
+  - "glm-5-turbo"
+  - "glm-5.2"
+  - "glm-5.2-highspeed"
+  - "glm-5.3"
+  - "glm-5.3-flash"
+  - "glm-5.3-highspeed"
+globs: []

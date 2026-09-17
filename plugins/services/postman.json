@@ -1,0 +1,52 @@
+{
+	"server": "postman",
+	"service": "postman",
+	"label": "Postman",
+	"url": "https://mcp.postman.com/mcp",
+	"aliases": [],
+	"publisher": "Postman",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.postman.com/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.postman.com",
+			"resource": "https://mcp.postman.com/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"tokenAuthMethods": [
+				"none",
+				"client_secret_basic",
+				"client_secret_post"
+			],
+			"sourceUrls": [
+				"https://mcp.postman.com/mcp",
+				"https://mcp.postman.com/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.postman.com/.well-known/oauth-protected-resource",
+				"https://mcp.postman.com/.well-known/oauth-authorization-server",
+				"https://mcp.postman.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/Postman-Devrel/postman-claude-code-plugin.git",
+			"commit": "27f652ea98d9ae0cec0ccc9f2b46128239a36a8f",
+			"url": "https://raw.githubusercontent.com/Postman-Devrel/postman-claude-code-plugin/27f652ea98d9ae0cec0ccc9f2b46128239a36a8f/.mcp.json"
+		}
+	]
+}
