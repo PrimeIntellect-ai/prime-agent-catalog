@@ -89,6 +89,51 @@ cd /path/to/prime-agent/packages/ai
 npm run catalog:export -- /path/to/prime-agent-catalog
 ```
 
+## Adding a model — decision rules for agents
+
+Follow this order. Every rule exists because a failure mode was observed.
+
+1. **Is the provider implemented by the Prime Agent client?** If not, STOP. The
+   client drops any catalog entry whose `(provider, api, baseUrl)` does not match
+   a compiled transport. A new provider needs a client transport plus a client
+   release first; the catalog can add models to existing providers only.
+2. **Does an upstream catalog exist?** Check models.dev
+   (`https://models.dev`) for the provider. Pick the slug by PRODUCT, not by
+   name: match the endpoint the client actually calls. Verified traps: our
+   `zai` is the coding-plan product, so its source is `zai-coding-plan`, NOT the
+   plain `zai` API slug; our `kimi-coding` maps to `kimi-for-coding`;
+   `vercel-ai-gateway` maps to the `vercel` slug. OpenRouter and Vercel fetch
+   their own billing-authoritative endpoints instead of models.dev.
+3. **Upstream exists → whitelist. NEVER manual.** Add the exact id (or an
+   intentional glob) to `models/whitelist/<provider>.yml` and run the exporter;
+   metadata (name, cost, context, limits, thinkingLevelMap from
+   `reasoning_options`) comes from upstream. Manual entries for an upstream
+   provider go stale and will drift from the next sync review.
+4. **No upstream anywhere → manual.** This is the ONLY case for
+   `models/manual/<provider>.yml`: hand-written full entries for surfaces no
+   aggregator can enumerate. Today that is exactly one provider:
+   `openai-codex.yml` (ChatGPT subscription — OAuth-gated, client-version-
+   negotiated catalog). If you are adding a second manual file, you must be able
+   to state why no upstream exists for it.
+5. **Manual entry requirements:** complete schema (id, name, api, provider,
+   baseUrl, reasoning, input, cost, contextWindow, maxTokens; optional
+   thinkingLevelMap/featured/compat), verified against the provider's own
+   docs — never guessed. NO `headers` key: the client silently drops entries
+   carrying request headers; header values live in the client's compiled
+   transport templates.
+6. **After adding:** run the exporter, review the emitted
+   `catalog.v1.json` + `admission-manifest.v1.json` diffs (a valid add appears
+   in BOTH), run the full catalog suite, and commit the yml plus the two
+   generated artifacts together. An id hand-added to the aggregate without the
+   exporter fails CI on manifest mismatch.
+7. **Removing a model:** delete its id from the whitelist (the reviewed
+   deletion path) and run the exporter — it disappears from the aggregate and
+   manifest together. Never edit the generated artifacts directly.
+8. **New synced provider:** needs an exporter mapping block in
+   `packages/ai/scripts/generate-models.ts` (api/baseUrl/compat knowledge)
+   plus a new whitelist yml with a `source` the exporter recognizes — a mismatch
+   is a hard error. Then the same flow as 3.
+
 ## Invariants
 
 - Never hand-edit model artifacts; never bypass the manifest check.
