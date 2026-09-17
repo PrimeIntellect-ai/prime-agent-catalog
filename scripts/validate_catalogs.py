@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Validate Prime Agent public catalog artifacts.
 
-The editable sources of truth are models/providers/<provider>.json,
-plugins/index.json, and plugins/entries/<server>.json. models/catalog.v1.json
+The generated model sources are models/providers/<provider>.json. The editable
+model sync sources are models/whitelist/<provider>.yml and
+models/manual/<provider>.yml, parsed only by the TypeScript exporter.
+plugins/index.json and plugins/services/<server>.json are editable plugin sources.
+models/catalog.v1.json
 and plugins/catalog.v2.json are generated aggregates: this script does not
 rewrite them, but it does fail when a committed aggregate drifts from its
 sources. It checks envelope compatibility,
@@ -26,7 +29,7 @@ MODEL_CATALOG = Path("models/catalog.v1.json")
 MODELS_PROVIDERS_DIR = Path("models/providers")
 MCP_CATALOG = Path("plugins/catalog.v2.json")
 PLUGINS_INDEX = Path("plugins/index.json")
-PLUGINS_ENTRIES_DIR = Path("plugins/entries")
+PLUGINS_SERVICES_DIR = Path("plugins/services")
 MAX_ENTRY_FILE_BYTES = 128_000
 MAX_MODEL_PROVIDER_FILE_BYTES = 512_000
 
@@ -922,7 +925,7 @@ def _validate_models_sources(errors: list[str]) -> None:
 
 
 def _validate_plugins_sources(errors: list[str]) -> None:
-	"""Validate plugins/index.json and plugins/entries/, then fail on aggregate drift."""
+	"""Validate plugins/index.json and plugins/services/, then fail on aggregate drift."""
 	if not (ROOT / PLUGINS_INDEX).exists():
 		_error(errors, PLUGINS_INDEX, "missing")
 	else:
@@ -939,22 +942,22 @@ def _validate_plugins_sources(errors: list[str]) -> None:
 					_error(errors, PLUGINS_INDEX, "version must be 2")
 				_validate_sources(index.get("sources"), PLUGINS_INDEX, errors)
 
-	entries_full = ROOT / PLUGINS_ENTRIES_DIR
+	entries_full = ROOT / PLUGINS_SERVICES_DIR
 	if not entries_full.is_dir():
-		_error(errors, PLUGINS_ENTRIES_DIR, "directory missing")
+		_error(errors, PLUGINS_SERVICES_DIR, "directory missing")
 		return
 	items = sorted(entries_full.iterdir())
 	for item in items:
 		if item.is_dir() or item.suffix != ".json":
-			_error(errors, PLUGINS_ENTRIES_DIR, f"must contain only JSON files; found {item.name}")
+			_error(errors, PLUGINS_SERVICES_DIR, f"must contain only JSON files; found {item.name}")
 	json_files = [item for item in items if item.suffix == ".json" and not item.is_dir()]
 	if not (1 <= len(json_files) <= MAX_COUNTS["mcp_entries"]):
-		_error(errors, PLUGINS_ENTRIES_DIR, f"entry file count {len(json_files)} outside 1..{MAX_COUNTS['mcp_entries']}")
+		_error(errors, PLUGINS_SERVICES_DIR, f"service file count {len(json_files)} outside 1..{MAX_COUNTS['mcp_entries']}")
 		return
 
 	counters = _new_counters()
 	for item in json_files:
-		rel = PLUGINS_ENTRIES_DIR / item.name
+		rel = PLUGINS_SERVICES_DIR / item.name
 		if item.stat().st_size > MAX_ENTRY_FILE_BYTES:
 			_error(errors, rel, f"file is over the {MAX_ENTRY_FILE_BYTES} byte limit")
 		entry = _read_json(rel, errors)
@@ -966,7 +969,7 @@ def _validate_plugins_sources(errors: list[str]) -> None:
 		if isinstance(entry, dict) and isinstance(entry.get("server"), str):
 			if entry["server"] != item.stem:
 				_error(errors, rel, f"file name must match its server id (expected {entry['server']}.json)")
-	_check_entry_cross_rules(counters, len(json_files), None, PLUGINS_ENTRIES_DIR, errors, check_counts=False, require_sorted=False)
+	_check_entry_cross_rules(counters, len(json_files), None, PLUGINS_SERVICES_DIR, errors, check_counts=False, require_sorted=False)
 
 	try:
 		import generate_plugins_catalog
@@ -984,8 +987,13 @@ def validate(root: Path = ROOT) -> list[str]:
 
     models_root = ROOT / "models"
     model_items = sorted(item.name for item in models_root.iterdir()) if models_root.exists() else []
-    if model_items != ["catalog.v1.json", "providers"]:
-        _error(errors, "models", f"expected exactly {str(MODEL_CATALOG)!r} and {str(MODELS_PROVIDERS_DIR)!r}, found {model_items!r}")
+    if model_items != ["catalog.v1.json", "manual", "providers", "whitelist"]:
+        _error(
+            errors,
+            "models",
+            "expected exactly 'models/catalog.v1.json', 'models/manual', 'models/providers', and "
+            f"'models/whitelist', found {model_items!r}",
+        )
     plugins_catalog = (ROOT / MCP_CATALOG).exists()
     if not plugins_catalog:
         _error(errors, "plugins", f"missing stable plugins catalog {str(MCP_CATALOG)!r}")

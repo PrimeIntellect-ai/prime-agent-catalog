@@ -7,10 +7,12 @@ Implementation contract for agents and maintainers editing this repository.
 
 ```text
 models/
-  providers/<provider>.json   # EDITABLE truth: ordered model array per provider
+  whitelist/<provider>.yml    # EDITABLE admission policy for synced providers
+  manual/<provider>.yml       # EDITABLE full entries for providers with no upstream
+  providers/<provider>.json   # GENERATED synced/manual record; ordered model array per provider
   catalog.v1.json             # GENERATED aggregate; the client-fetched artifact
 plugins/
-  entries/<server>.json       # EDITABLE truth: one MCP service entry per file
+  services/<server>.json       # EDITABLE truth: one MCP service entry per file
   index.json                  # EDITABLE truth: version + sources envelope
   catalog.v2.json             # GENERATED aggregate; the client-fetched artifact
   examples/                   # user-facing local-services authoring example
@@ -19,7 +21,6 @@ scripts/
   generate_plugins_catalog.py  # builds plugins/catalog.v2.json; --check = drift gate
   validate_catalogs.py         # structural + security validation, Python stdlib only
   test_mutation_validation.py  # negative tests guarding the validator
-sync-policy.json               # whitelist growth policy for upstream syncs
 .github/workflows/ci.yml       # validate -> models drift -> plugins drift -> mutations
 .github/CODEOWNERS             # required reviewers on every file
 SECURITY.md                    # production trust boundary + required repo settings
@@ -27,15 +28,18 @@ SECURITY.md                    # production trust boundary + required repo setti
 
 ## Authoring rules
 
-- Models: edit `models/providers/<provider>.json`, then regenerate.
-- Plugins: edit `plugins/entries/<server>.json` (or `plugins/index.json` for
+- Synced models: edit `models/whitelist/<provider>.yml`, then run the Prime Agent exporter and regenerate.
+- Manual models: edit `models/manual/<provider>.yml`, then run the Prime Agent exporter and regenerate.
+- Plugins: edit `plugins/services/<server>.json` (or `plugins/index.json` for
   envelope metadata), then regenerate.
 - Never hand-edit the aggregates (`models/catalog.v1.json`,
   `plugins/catalog.v2.json`); they are regenerated and drift fails CI.
-- Commit source files and the regenerated aggregate together.
+- Commit editable source files, generated provider files, and the regenerated aggregate together.
 - All JSON is canonical: tab-indented, deterministic key order, trailing
-  newline. Provider/entry files are named after their id (provider slug /
-  server id); the validators enforce the match.
+  newline. Provider/service files are named after their id (provider slug /
+  server id); the validators enforce the match. YAML is parsed only by the
+  Prime Agent TypeScript exporter, not by this repository's Python tooling.
+- Each `models/*/<provider>.yml` and `models/providers/<provider>.json` file is per provider. Each `plugins/services/<server>.json` file is one connector = one server id; several files can share a service brand (for example, the zoom family: `zoom`, `zoom-chat`, `zoom-meetings`, `zoom-tasks`, `zoom-whiteboard`, and `zoom-canvas` all carry `service: zoom`).
 
 ## Commands
 
@@ -55,7 +59,7 @@ npm test            # validate + mutation tests
 
 - JSON parses; envelopes and versions stay compatible.
 - `models/` holds exactly the generated catalog plus `providers/`; plugins
-  entry files are named after their server ids.
+  service files are named after their server ids.
 - Committed aggregates equal regeneration from their sources (drift fails).
 - Model entries match the consumer schema: allowed keys, limits, compat shapes.
 - MCP entries match the transport, auth, setup, verification, and provenance
@@ -75,17 +79,29 @@ source files.
 ## Syncing from provider catalog endpoints
 
 Gateway providers (OpenRouter, Vercel AI Gateway, models.dev-sourced providers)
-publish catalog endpoints. `PrimeIntellect-ai/prime-agent` carries the fetch and
-mapping logic in `packages/ai/scripts/generate-models.ts`; run it with
-`--catalog-out <this-repo>` to export provider files here. The sync is
-whitelist-safe:
+publish catalog endpoints. `PrimeIntellect-ai/prime-agent` carries all per-provider
+fetch and mapping knowledge in `packages/ai/scripts/generate-models.ts`; run it
+with `--catalog-out <this-repo>` to export provider files here.
 
-- Refresh-only by default: metadata updates for model ids already present.
-  Never adds, never deletes.
-- New models require an explicit `--allow-new <provider>=<glob>` flag or a
-  glob in root `sync-policy.json` (PR-reviewed growth policy).
-- Deletions are always manual, reviewed PRs.
-- prime-inference is never synced here; clients fetch it live with credentials.
+`models/whitelist/<provider>.yml` is the PR-reviewed admission policy for synced
+providers:
+
+- `source` names the upstream source expected by the exporter.
+- `ids` lists the exact admitted model ids in catalog order.
+- `globs` admits matching upstream ids in addition to `ids`; each glob-admitted
+  id is reported by the exporter.
+- Removing an id from `ids` is the reviewed deletion path. The exporter delists
+  that model from the generated provider file and reports it loudly.
+- Whitelisted ids missing from upstream keep the last committed
+  `models/providers/<provider>.json` entry and are reported as not-in-upstream.
+
+`models/manual/<provider>.yml` stores hand-written full entries for providers
+with no synced upstream. Manual providers are emitted verbatim by the exporter
+and are never synced.
+
+The Python catalog tooling remains stdlib-only and never parses `whitelist/` or
+`manual/`; it validates only the generated JSON provider files and aggregates.
+prime-inference is never synced here; clients fetch it live with credentials.
 
 Run the exporter from a `PrimeIntellect-ai/prime-agent` checkout:
 
@@ -93,10 +109,6 @@ Run the exporter from a `PrimeIntellect-ai/prime-agent` checkout:
 cd /path/to/prime-agent/packages/ai
 npm run catalog:export -- /path/to/prime-agent-catalog
 ```
-
-The root `sync-policy.json` is the PR-reviewed growth policy. Keep `allowNew`
-empty for refresh-only providers. Add globs there only when the PR intends to
-admit matching new upstream model ids.
 
 ## Invariants
 

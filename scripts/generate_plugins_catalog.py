@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate the plugins service catalog aggregate from per-entry sources.
+"""Generate the plugins service catalog aggregate from service source files.
 
-The editable source of truth is `plugins/entries/<server>.json` plus
+The editable source of truth is `plugins/services/<server>.json` plus
 `plugins/index.json` (envelope metadata). This script deterministically builds
 `plugins/catalog.v2.json` — the stable client-consumed artifact — and fails
 closed on malformed sources. Run with --check to compare against the committed
@@ -20,7 +20,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX_PATH = Path("plugins/index.json")
-ENTRIES_DIR = Path("plugins/entries")
+SERVICES_DIR = Path("plugins/services")
 OUTPUT_PATH = Path("plugins/catalog.v2.json")
 
 MAX_ENTRY_FILE_BYTES = 128_000
@@ -75,15 +75,15 @@ def load_index(root: Path) -> dict[str, Any]:
 
 
 def load_entries(root: Path) -> list[dict[str, Any]]:
-    entries_dir = root / ENTRIES_DIR
+    entries_dir = root / SERVICES_DIR
     if not entries_dir.is_dir():
-        _fail(f"{ENTRIES_DIR} directory is missing")
+        _fail(f"{SERVICES_DIR} directory is missing")
     files = sorted(entries_dir.iterdir())
     for item in files:
         if item.is_dir() or item.suffix != ".json":
-            _fail(f"{ENTRIES_DIR} must contain only JSON files; found {item.name}")
+            _fail(f"{SERVICES_DIR} must contain only JSON files; found {item.name}")
     if not (1 <= len(files) <= MAX_ENTRIES):
-        _fail(f"{ENTRIES_DIR} must hold 1..{MAX_ENTRIES} entry files")
+        _fail(f"{SERVICES_DIR} must hold 1..{MAX_ENTRIES} service files")
     entries: list[dict[str, Any]] = []
     seen: set[str] = set()
     for item in files:
@@ -182,10 +182,10 @@ def check(root: Path = ROOT) -> list[str]:
     try:
         expected = generate_text(root)
     except ValueError as exc:
-        return [f"{ENTRIES_DIR}: {exc}"]
+        return [f"{SERVICES_DIR}: {exc}"]
     if committed != expected:
         return [
-            f"{OUTPUT_PATH}: does not match the catalog generated from {ENTRIES_DIR} and {INDEX_PATH}; "
+            f"{OUTPUT_PATH}: does not match the catalog generated from {SERVICES_DIR} and {INDEX_PATH}; "
             "run scripts/generate_plugins_catalog.py and commit the result"
         ]
     return []

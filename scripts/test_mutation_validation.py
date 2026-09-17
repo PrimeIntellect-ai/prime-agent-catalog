@@ -23,7 +23,7 @@ MODEL_PATH = Path("models/catalog.v1.json")
 MODEL_PROVIDERS_DIR = Path("models/providers")
 MCP_PATH = Path("plugins/catalog.v2.json")
 INDEX_PATH = Path("plugins/index.json")
-ENTRIES_DIR = Path("plugins/entries")
+SERVICES_DIR = Path("plugins/services")
 
 
 class Ctx:
@@ -40,7 +40,7 @@ class Ctx:
 		self.index = json.loads((root / INDEX_PATH).read_text(encoding="utf-8"))
 		self.entries = {
 			item.stem: json.loads(item.read_text(encoding="utf-8"))
-			for item in sorted((root / ENTRIES_DIR).glob("*.json"))
+			for item in sorted((root / SERVICES_DIR).glob("*.json"))
 		}
 
 	def write_back(self) -> None:
@@ -53,19 +53,24 @@ class Ctx:
 		dump(self.root / MCP_PATH, self.mcp)
 		dump(self.root / INDEX_PATH, self.index)
 		for stem, entry in self.entries.items():
-			dump(self.root / ENTRIES_DIR / f"{stem}.json", entry)
+			dump(self.root / SERVICES_DIR / f"{stem}.json", entry)
 
 
 def _prepare_root(tmpdir: Path) -> None:
 	(tmpdir / "models" / "providers").mkdir(parents=True)
+	(tmpdir / "models" / "manual").mkdir(parents=True)
+	(tmpdir / "models" / "whitelist").mkdir(parents=True)
 	shutil.copyfile(ROOT / MODEL_PATH, tmpdir / MODEL_PATH)
 	for item in sorted((ROOT / MODEL_PROVIDERS_DIR).glob("*.json")):
 		shutil.copyfile(item, tmpdir / MODEL_PROVIDERS_DIR / item.name)
-	(tmpdir / "plugins" / "entries").mkdir(parents=True)
+	for dirname in ("manual", "whitelist"):
+		for item in sorted((ROOT / "models" / dirname).glob("*.yml")):
+			shutil.copyfile(item, tmpdir / "models" / dirname / item.name)
+	(tmpdir / "plugins" / "services").mkdir(parents=True)
 	shutil.copyfile(ROOT / MCP_PATH, tmpdir / MCP_PATH)
 	shutil.copyfile(ROOT / INDEX_PATH, tmpdir / INDEX_PATH)
-	for item in sorted((ROOT / ENTRIES_DIR).glob("*.json")):
-		shutil.copyfile(item, tmpdir / ENTRIES_DIR / item.name)
+	for item in sorted((ROOT / SERVICES_DIR).glob("*.json")):
+		shutil.copyfile(item, tmpdir / SERVICES_DIR / item.name)
 
 
 def _run_case(name: str, mutate: Callable[[Ctx], None]) -> tuple[bool, list[str]]:
@@ -192,7 +197,7 @@ def filename_mismatch(ctx: Ctx) -> None:
 def deleted_entry_file(ctx: Ctx) -> None:
 	stem = _first_entry(ctx)
 	del ctx.entries[stem]
-	(ctx.root / ENTRIES_DIR / f"{stem}.json").unlink()
+	(ctx.root / SERVICES_DIR / f"{stem}.json").unlink()
 
 
 CASES: list[tuple[str, Callable[[Ctx], None]]] = [

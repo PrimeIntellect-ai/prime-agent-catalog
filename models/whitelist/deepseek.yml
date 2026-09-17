@@ -1,0 +1,7 @@
+# Admission policy for deepseek.
+# source: deepseek is the models.dev source slug used for this provider.
+source: "deepseek"
+ids:
+  - "deepseek-v4-flash"
+  - "deepseek-v4-pro"
+globs: []

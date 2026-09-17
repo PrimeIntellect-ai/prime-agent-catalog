@@ -19,7 +19,7 @@ produce and protect them.
 ## How it works
 
 - Catalog payloads are generated from small editable source files
-  (`models/providers/`, `plugins/entries/`, `plugins/index.json`).
+  (`models/providers/`, `plugins/services/`, `plugins/index.json`).
 - CI validates structure, security invariants, and that the committed
   aggregates match their sources — drift fails the build.
 - Every change is reviewed by a code owner (`.github/CODEOWNERS`) under the
@@ -29,8 +29,8 @@ produce and protect them.
 
 - Add a model or refresh a provider's metadata.
 - Add or update an MCP service connector.
-- Bulk-sync gateway providers from their catalog endpoints, gated by a
-  whitelist.
+- Bulk-sync gateway providers from their catalog endpoints, gated by
+  per-provider whitelist files.
 
 `AGENTS.md` documents the full layout, tooling commands, validation rules, and
 invariants for agents and maintainers making those changes.

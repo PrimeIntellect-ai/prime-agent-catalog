@@ -1,0 +1,12 @@
+# Admission policy for xai.
+# source: xai is the models.dev source slug used for this provider.
+source: "xai"
+ids:
+  - "grok-4.20-0309-non-reasoning"
+  - "grok-4.20-0309-reasoning"
+  - "grok-4.3"
+  - "grok-4.5"
+  - "grok-4.6"
+  - "grok-build-0.1"
+  - "grok-code-fast-1"
+globs: []
