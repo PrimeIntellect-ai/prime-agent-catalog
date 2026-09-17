@@ -9,10 +9,9 @@ here ships new models and connectors to every user without a client release.
 | Path | Envelope |
 | --- | --- |
 | `models/catalog.v1.json` | `{ "schemaVersion": 1, "models": [...] }` |
-| `models/admission-manifest.v1.json` | `{ "schemaVersion": 1, "admitted": {...} }` |
 | `plugins/catalog.v2.json` | `{ "version": 2, "sources": [...], "counts": {...}, "entries": [...] }` |
 
-The catalog files are the client contract: Prime Agent fetches the public catalog URLs and validates the payloads with its compiled parser. Their paths and schemas change only with a client release. Everything else in this repository exists to produce and protect them.
+These two files are the client contract: Prime Agent fetches exactly these URLs and validates the payloads with its compiled parser. Their paths and schemas change only with a client release. Everything else in this repository — whitelists, manual entries, the admission manifest — exists to produce and protect them; nothing else is fetched by clients.
 
 ## How it works
 
