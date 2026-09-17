@@ -94,6 +94,10 @@ def duplicate_model_id(ctx: Ctx) -> None:
 	ctx.models["models"].insert(1, copy.deepcopy(ctx.models["models"][0]))
 
 
+def model_request_headers(ctx: Ctx) -> None:
+	ctx.models["models"][0]["headers"] = {"User-Agent": "injected-by-catalog"}
+
+
 def stale_models_aggregate(ctx: Ctx) -> None:
 	"""Edit a provider source without regenerating the committed aggregate."""
 	provider = _first_model_provider(ctx)
@@ -193,6 +197,7 @@ def deleted_entry_file(ctx: Ctx) -> None:
 
 CASES: list[tuple[str, Callable[[Ctx], None]]] = [
 	("duplicate-model-id", duplicate_model_id),
+	("model-request-headers", model_request_headers),
 	("stale-models-aggregate", stale_models_aggregate),
 	("hand-edited-models-aggregate", hand_edited_models_aggregate),
 	("provider-filename-mismatch", provider_filename_mismatch),

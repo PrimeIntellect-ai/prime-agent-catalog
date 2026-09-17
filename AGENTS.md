@@ -106,6 +106,9 @@ admit matching new upstream model ids.
 - Do not add source shards without a generated, drift-checked aggregate.
 - `thinkingLevelMap` entries must be verified against the provider's real API
   surface; never blanket-populate.
+- Model catalog entries never carry `headers`. Request headers live in the
+  client's compiled transport templates; the sync exporter strips them, and the
+  validator rejects them — catalog data must never change what a request sends.
 - Catalog data must never contain credentials, OAuth client ids, or
   non-public endpoints.
 
