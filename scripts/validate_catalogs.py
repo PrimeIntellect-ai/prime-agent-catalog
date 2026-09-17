@@ -6,8 +6,7 @@ and plugins/entries/<server>.json. plugins/catalog.v2.json is a generated
 aggregate: this script does not rewrite it, but it does fail when the committed
 aggregate drifts from its sources. It checks envelope compatibility,
 consumer-facing schema shape, deterministic ordering, bounded size/counts, URL
-safety, and basic secret hygiene. The migration metadata is historical only and
-is not a live hash gate.
+safety, and basic secret hygiene.
 """
 
 from __future__ import annotations
@@ -26,14 +25,11 @@ MODEL_CATALOG = Path("models/catalog.v1.json")
 MCP_CATALOG = Path("plugins/catalog.v2.json")
 PLUGINS_INDEX = Path("plugins/index.json")
 PLUGINS_ENTRIES_DIR = Path("plugins/entries")
-MIGRATION = Path(".catalog-migration.v1.json")
 MAX_ENTRY_FILE_BYTES = 128_000
-CATALOG_PATHS = (MODEL_CATALOG, MCP_CATALOG)
 
 MAX_BYTES = {
     MODEL_CATALOG: 2_000_000,
     MCP_CATALOG: 1_000_000,
-    MIGRATION: 100_000,
 }
 MAX_COUNTS = {
     "models": 20_000,
@@ -52,7 +48,6 @@ SECRET_PATTERNS = (
 )
 
 HEX_40 = re.compile(r"^[0-9a-f]{40}$")
-HEX_64 = re.compile(r"^[0-9a-f]{64}$")
 SAFE_REL_PATH = re.compile(r"^[A-Za-z0-9._/-]+$")
 CONTROL_CHARS = re.compile(r"[\u0000-\u001f\u007f-\u009f]")
 SERVER_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
@@ -185,7 +180,7 @@ def _check_canonical_json(path: Path, data: Any, errors: list[str]) -> None:
     raw = (ROOT / path).read_text(encoding="utf-8")
     canonical = json.dumps(data, indent="\t", ensure_ascii=False) + "\n"
     if raw != canonical:
-        _error(errors, path, "not in canonical tab-indented JSON form; run scripts/build_catalogs.py only after fixing source order/format")
+        _error(errors, path, "not in canonical tab-indented JSON form; fix the source file format")
 
 
 def _walk_strings(value: Any, path: str = "$"):
@@ -911,57 +906,6 @@ def _validate_plugins_sources(errors: list[str]) -> None:
 		_error(errors, "plugins", f"catalog generation failed: {exc}")
 
 
-def _validate_migration(data: Any, errors: list[str]) -> None:
-    path = MIGRATION
-    if not isinstance(data, dict):
-        _error(errors, path, "top-level value must be an object")
-        return
-    if list(data.keys()) != ["schemaVersion", "description", "catalogs"]:
-        _error(errors, path, "top-level keys must remain ['schemaVersion', 'description', 'catalogs'] in that order")
-    if data.get("schemaVersion") != 1:
-        _error(errors, path, "schemaVersion must be 1")
-    if not _is_non_empty_string(data.get("description"), 1000):
-        _error(errors, path, "description must be a non-empty bounded string")
-    catalogs = data.get("catalogs")
-    if not isinstance(catalogs, list):
-        _error(errors, path, "catalogs must be an array")
-        return
-    paths = [item.get("path") for item in catalogs if isinstance(item, dict)]
-    expected_paths = [str(item) for item in CATALOG_PATHS]
-    if paths != expected_paths:
-        _error(errors, path, f"catalog paths must be {expected_paths!r} in order")
-    for index, item in enumerate(catalogs):
-        location = f"{path}:catalogs[{index}]"
-        if not isinstance(item, dict):
-            _error(errors, location, "catalog entry must be an object")
-            continue
-        if list(item.keys()) != ["path", "importedBytes", "importedSha256", "migratedFrom"]:
-            _error(errors, location, "catalog migration keys must be ['path', 'importedBytes', 'importedSha256', 'migratedFrom']")
-        rel = item.get("path")
-        if not isinstance(rel, str) or rel not in expected_paths:
-            _error(errors, location, "path must point to a known public catalog artifact")
-        if not isinstance(item.get("importedBytes"), int) or item["importedBytes"] <= 0:
-            _error(errors, location, "importedBytes must be a positive integer")
-        if not isinstance(item.get("importedSha256"), str) or not HEX_64.match(item["importedSha256"]):
-            _error(errors, location, "importedSha256 must be a 64-character lowercase SHA-256")
-        source = item.get("migratedFrom")
-        if not isinstance(source, dict):
-            _error(errors, location, "migratedFrom must be an object")
-            continue
-        for key in ("repository", "sourceCommit", "sourcePath", "sourceUrl"):
-            if key not in source:
-                _error(errors, f"{location}.migratedFrom", f"missing required key {key!r}")
-        if "sourceCommit" in source and (not isinstance(source["sourceCommit"], str) or not HEX_40.match(source["sourceCommit"])):
-            _error(errors, location, "sourceCommit must be a 40-character lowercase SHA-1")
-        if "sourcePath" in source and (not isinstance(source["sourcePath"], str) or not SAFE_REL_PATH.match(source["sourcePath"])):
-            _error(errors, location, "sourcePath must be a safe relative path")
-        if "sourceUrl" in source:
-            if isinstance(source["sourceUrl"], str):
-                _check_url(source["sourceUrl"], f"{location}.migratedFrom.sourceUrl", errors)
-            else:
-                _error(errors, location, "sourceUrl must be an https URL")
-
-
 def validate(root: Path = ROOT) -> list[str]:
     global ROOT
     ROOT = root.resolve()
@@ -976,9 +920,8 @@ def validate(root: Path = ROOT) -> list[str]:
 
     models = _read_json(MODEL_CATALOG, errors)
     mcp = _read_json(MCP_CATALOG, errors)
-    migration = _read_json(MIGRATION, errors)
 
-    for path, data in ((MODEL_CATALOG, models), (MCP_CATALOG, mcp), (MIGRATION, migration)):
+    for path, data in ((MODEL_CATALOG, models), (MCP_CATALOG, mcp)):
         if data is not None:
             _check_canonical_json(path, data, errors)
             _check_urls_and_secrets(path, data, errors)
@@ -987,8 +930,6 @@ def validate(root: Path = ROOT) -> list[str]:
         _validate_model_catalog(models, errors)
     if mcp is not None:
         _validate_mcp_catalog(mcp, errors)
-    if migration is not None:
-        _validate_migration(migration, errors)
     _validate_plugins_sources(errors)
 
     return errors

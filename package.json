@@ -5,7 +5,6 @@
 	"description": "Public catalog artifacts for Prime Agent models and MCP services.",
 	"scripts": {
 		"validate": "python3 scripts/validate_catalogs.py",
-		"build": "python3 scripts/build_catalogs.py",
 		"test": "python3 scripts/validate_catalogs.py && python3 scripts/test_mutation_validation.py",
 		"generate": "python3 scripts/generate_plugins_catalog.py"
 	}

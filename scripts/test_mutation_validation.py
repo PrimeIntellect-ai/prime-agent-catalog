@@ -23,7 +23,6 @@ MODEL_PATH = Path("models/catalog.v1.json")
 MCP_PATH = Path("plugins/catalog.v2.json")
 INDEX_PATH = Path("plugins/index.json")
 ENTRIES_DIR = Path("plugins/entries")
-MIGRATION_PATH = Path(".catalog-migration.v1.json")
 
 
 class Ctx:
@@ -58,7 +57,6 @@ def _prepare_root(tmpdir: Path) -> None:
 	shutil.copyfile(ROOT / INDEX_PATH, tmpdir / INDEX_PATH)
 	for item in sorted((ROOT / ENTRIES_DIR).glob("*.json")):
 		shutil.copyfile(item, tmpdir / ENTRIES_DIR / item.name)
-	shutil.copyfile(ROOT / MIGRATION_PATH, tmpdir / MIGRATION_PATH)
 
 
 def _run_case(name: str, mutate: Callable[[Ctx], None]) -> tuple[bool, list[str]]:

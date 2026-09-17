@@ -25,5 +25,3 @@ jobs:
         run: python3 scripts/generate_plugins_catalog.py --check
       - name: Run mutation validation tests
         run: python3 scripts/test_mutation_validation.py
-      - name: Build catalog bundle
-        run: python3 scripts/build_catalogs.py

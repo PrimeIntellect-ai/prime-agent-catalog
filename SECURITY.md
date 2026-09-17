@@ -16,9 +16,6 @@ secrets, malformed MCP transports, and count/order drift. It is not a runtime
 network sandbox. Consumers still own request-time DNS, redirect, credential, and
 SSRF protections.
 
-The `plugins/sources/`, `plugins/audit/`, and `plugins/reference/` trees are migration evidence and reference material. It is not a
-runtime input and CI does not claim deterministic regeneration from it.
-
 ## Required repository settings
 
 Before this repository feeds production clients, configure repository settings in
