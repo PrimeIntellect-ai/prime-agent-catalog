@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 """Validate Prime Agent public catalog artifacts.
 
-The generated model sources are models/providers/<provider>.json. The editable
-model sync sources are models/whitelist/<provider>.yml and
+The editable model sync sources are models/whitelist/<provider>.yml and
 models/manual/<provider>.yml, parsed only by the TypeScript exporter.
 plugins/index.json and plugins/services/<server>.json are editable plugin sources.
-models/catalog.v1.json
-and plugins/catalog.v2.json are generated aggregates: this script does not
-rewrite them, but it does fail when a committed aggregate drifts from its
-sources. It checks envelope compatibility,
-consumer-facing schema shape, deterministic ordering, bounded size/counts, URL
-safety, and basic secret hygiene.
+models/catalog.v1.json, models/admission-manifest.v1.json, and
+plugins/catalog.v2.json are generated artifacts: this script does not rewrite
+them. It checks envelope compatibility, consumer-facing schema shape,
+deterministic ordering, bounded size/counts, URL safety, and basic secret hygiene.
 """
 
 from __future__ import annotations
@@ -26,15 +23,15 @@ from urllib.parse import parse_qsl, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 
 MODEL_CATALOG = Path("models/catalog.v1.json")
-MODELS_PROVIDERS_DIR = Path("models/providers")
+MODEL_ADMISSION_MANIFEST = Path("models/admission-manifest.v1.json")
 MCP_CATALOG = Path("plugins/catalog.v2.json")
 PLUGINS_INDEX = Path("plugins/index.json")
 PLUGINS_SERVICES_DIR = Path("plugins/services")
 MAX_ENTRY_FILE_BYTES = 128_000
-MAX_MODEL_PROVIDER_FILE_BYTES = 512_000
 
 MAX_BYTES = {
     MODEL_CATALOG: 2_000_000,
+    MODEL_ADMISSION_MANIFEST: 500_000,
     MCP_CATALOG: 1_000_000,
 }
 MAX_COUNTS = {
@@ -418,6 +415,20 @@ def _validate_model_entry(model: Any, location: str, errors: list[str]) -> tuple
     return None
 
 
+def _aggregate_model_ids_by_provider(data: Any) -> dict[str, list[str]]:
+    result: dict[str, list[str]] = {}
+    if not isinstance(data, dict) or not isinstance(data.get("models"), list):
+        return result
+    for model in data["models"]:
+        if not isinstance(model, dict):
+            continue
+        provider = model.get("provider")
+        model_id = model.get("id")
+        if isinstance(provider, str) and isinstance(model_id, str):
+            result.setdefault(provider, []).append(model_id)
+    return result
+
+
 def _validate_model_catalog(data: Any, errors: list[str]) -> None:
     path = MODEL_CATALOG
     if not isinstance(data, dict):
@@ -448,6 +459,48 @@ def _validate_model_catalog(data: Any, errors: list[str]) -> None:
         _error(errors, path, f"duplicate provider/id pairs: {duplicates[:20]}")
     if providers != sorted(providers):
         _error(errors, path, "models must remain grouped in non-decreasing provider order")
+
+
+def _validate_admission_manifest(manifest: Any, model_catalog: Any, errors: list[str]) -> None:
+    path = MODEL_ADMISSION_MANIFEST
+    if not isinstance(manifest, dict):
+        _error(errors, path, "top-level value must be an object")
+        return
+    if list(manifest.keys()) != ["schemaVersion", "admitted"]:
+        _error(errors, path, "top-level keys must remain ['schemaVersion', 'admitted'] in that order")
+    if manifest.get("schemaVersion") != 1:
+        _error(errors, path, "schemaVersion must be 1")
+    admitted = manifest.get("admitted")
+    if not isinstance(admitted, dict):
+        _error(errors, path, "admitted must be an object")
+        return
+
+    aggregate = _aggregate_model_ids_by_provider(model_catalog)
+    aggregate_providers = list(aggregate.keys())
+    manifest_providers = list(admitted.keys())
+    if manifest_providers != aggregate_providers:
+        _error(errors, path, "admitted providers must match aggregate providers in aggregate order")
+
+    manifest_count = 0
+    aggregate_count = sum(len(ids) for ids in aggregate.values())
+    for provider, ids in admitted.items():
+        location = f"{path}:admitted.{provider}"
+        if not isinstance(provider, str) or not PROVIDER_NAME_PATTERN.match(provider):
+            _error(errors, path, f"provider name {provider!r} must match ^[a-z0-9][a-z0-9-]*$")
+        if not isinstance(ids, list):
+            _error(errors, location, "must be an array")
+            continue
+        typed_ids: list[str] = []
+        for index, model_id in enumerate(ids):
+            if not _is_non_empty_string(model_id, 1_024):
+                _error(errors, f"{location}[{index}]", "must be a non-empty string")
+            else:
+                typed_ids.append(model_id)
+        manifest_count += len(ids)
+        if provider in aggregate and typed_ids != aggregate[provider]:
+            _error(errors, location, "ids must match aggregate ids in the same order")
+    if manifest_count != aggregate_count:
+        _error(errors, path, f"admitted id count {manifest_count} must equal aggregate model count {aggregate_count}")
 
 
 def _validate_string_array(value: Any, location: str, errors: list[str], *, non_empty: bool = False) -> list[str]:
@@ -865,63 +918,15 @@ def _validate_mcp_catalog(data: Any, errors: list[str]) -> None:
 
 
 def _validate_models_sources(errors: list[str]) -> None:
-    """Validate models/providers/, then fail on aggregate drift."""
-    providers_full = ROOT / MODELS_PROVIDERS_DIR
-    if not providers_full.is_dir():
-        _error(errors, MODELS_PROVIDERS_DIR, "directory missing")
+    """Validate that the model JSON artifacts are the stable client contract files."""
+    models_full = ROOT / "models"
+    if not models_full.is_dir():
+        _error(errors, "models", "directory missing")
         return
-    items = sorted(providers_full.iterdir())
-    for item in items:
-        if item.is_dir() or item.suffix != ".json":
-            _error(errors, MODELS_PROVIDERS_DIR, f"must contain only JSON files; found {item.name}")
-    json_files = [item for item in items if item.suffix == ".json" and not item.is_dir()]
-    if not (1 <= len(json_files) <= 500):
-        _error(errors, MODELS_PROVIDERS_DIR, f"provider file count {len(json_files)} outside 1..500")
-        return
-
-    provider_ids: list[tuple[str, str]] = []
-    for item in json_files:
-        rel = MODELS_PROVIDERS_DIR / item.name
-        provider = item.stem
-        if not PROVIDER_NAME_PATTERN.match(provider):
-            _error(errors, rel, "provider file name must match ^[a-z0-9][a-z0-9-]*$")
-        if item.stat().st_size > MAX_MODEL_PROVIDER_FILE_BYTES:
-            _error(errors, rel, f"file is over the {MAX_MODEL_PROVIDER_FILE_BYTES} byte limit")
-        data = _read_json(rel, errors)
-        if data is None:
-            continue
-        _check_canonical_json(rel, data, errors)
-        _check_urls_and_secrets(rel, data, errors)
-        if not isinstance(data, list):
-            _error(errors, rel, "provider source must be an array")
-            continue
-        if not (1 <= len(data) <= MAX_COUNTS["models"]):
-            _error(errors, rel, f"model count {len(data)} outside 1..{MAX_COUNTS['models']}")
-        seen_ids: set[str] = set()
-        for index, model in enumerate(data):
-            location = f"{rel}:models[{index}]"
-            result = _validate_model_entry(model, location, errors)
-            if result is None:
-                continue
-            model_provider, model_id = result
-            if model_provider != provider:
-                _error(errors, location, f"provider must match file name {provider!r}")
-            if model_id in seen_ids:
-                _error(errors, rel, f"duplicate model id {model_id!r}")
-            seen_ids.add(model_id)
-            provider_ids.append((model_provider, model_id))
-
-    duplicates = [item for item, count in Counter(provider_ids).items() if count > 1]
-    if duplicates:
-        _error(errors, MODELS_PROVIDERS_DIR, f"duplicate provider/id pairs: {duplicates[:20]}")
-
-    try:
-        import generate_models_catalog
-
-        for message in generate_models_catalog.check(ROOT):
-            _error(errors, "models", message)
-    except Exception as exc:
-        _error(errors, "models", f"catalog generation failed: {exc}")
+    json_files = sorted(item.name for item in models_full.iterdir() if item.is_file() and item.suffix == ".json")
+    expected = [MODEL_ADMISSION_MANIFEST.name, MODEL_CATALOG.name]
+    if json_files != expected:
+        _error(errors, "models", f"top-level JSON files must be exactly {expected!r}, found {json_files!r}")
 
 
 def _validate_plugins_sources(errors: list[str]) -> None:
@@ -986,28 +991,27 @@ def validate(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
 
     models_root = ROOT / "models"
-    model_items = sorted(item.name for item in models_root.iterdir()) if models_root.exists() else []
-    if model_items != ["catalog.v1.json", "manual", "providers", "whitelist"]:
-        _error(
-            errors,
-            "models",
-            "expected exactly 'models/catalog.v1.json', 'models/manual', 'models/providers', and "
-            f"'models/whitelist', found {model_items!r}",
-        )
+    model_json_files = sorted(item.name for item in models_root.glob("*.json")) if models_root.exists() else []
+    expected_model_json_files = [MODEL_ADMISSION_MANIFEST.name, MODEL_CATALOG.name]
+    if model_json_files != expected_model_json_files:
+        _error(errors, "models", f"expected top-level JSON files {expected_model_json_files!r}, found {model_json_files!r}")
     plugins_catalog = (ROOT / MCP_CATALOG).exists()
     if not plugins_catalog:
         _error(errors, "plugins", f"missing stable plugins catalog {str(MCP_CATALOG)!r}")
 
     models = _read_json(MODEL_CATALOG, errors)
+    manifest = _read_json(MODEL_ADMISSION_MANIFEST, errors)
     mcp = _read_json(MCP_CATALOG, errors)
 
-    for path, data in ((MODEL_CATALOG, models), (MCP_CATALOG, mcp)):
+    for path, data in ((MODEL_CATALOG, models), (MODEL_ADMISSION_MANIFEST, manifest), (MCP_CATALOG, mcp)):
         if data is not None:
             _check_canonical_json(path, data, errors)
             _check_urls_and_secrets(path, data, errors)
 
     if models is not None:
         _validate_model_catalog(models, errors)
+    if manifest is not None and models is not None:
+        _validate_admission_manifest(manifest, models, errors)
     if mcp is not None:
         _validate_mcp_catalog(mcp, errors)
     _validate_models_sources(errors)

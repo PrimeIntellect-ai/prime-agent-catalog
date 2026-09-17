@@ -3,7 +3,8 @@
 
 Each case starts from the committed valid catalog state, applies one bad edit,
 and asserts that validation fails. Mutations cover the models catalog, the
-plugins entry sources, and the generated plugins aggregate (including drift).
+admission manifest, the plugins entry sources, and the generated plugins
+aggregate (including drift).
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ import validate_catalogs
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = Path("models/catalog.v1.json")
-MODEL_PROVIDERS_DIR = Path("models/providers")
+MANIFEST_PATH = Path("models/admission-manifest.v1.json")
 MCP_PATH = Path("plugins/catalog.v2.json")
 INDEX_PATH = Path("plugins/index.json")
 SERVICES_DIR = Path("plugins/services")
@@ -32,10 +33,7 @@ class Ctx:
 	def __init__(self, root: Path) -> None:
 		self.root = root
 		self.models = json.loads((root / MODEL_PATH).read_text(encoding="utf-8"))
-		self.model_providers = {
-			item.stem: json.loads(item.read_text(encoding="utf-8"))
-			for item in sorted((root / MODEL_PROVIDERS_DIR).glob("*.json"))
-		}
+		self.manifest = json.loads((root / MANIFEST_PATH).read_text(encoding="utf-8"))
 		self.mcp = json.loads((root / MCP_PATH).read_text(encoding="utf-8"))
 		self.index = json.loads((root / INDEX_PATH).read_text(encoding="utf-8"))
 		self.entries = {
@@ -48,8 +46,7 @@ class Ctx:
 			path.write_text(json.dumps(data, indent="\t", ensure_ascii=False) + "\n", encoding="utf-8")
 
 		dump(self.root / MODEL_PATH, self.models)
-		for provider, models in self.model_providers.items():
-			dump(self.root / MODEL_PROVIDERS_DIR / f"{provider}.json", models)
+		dump(self.root / MANIFEST_PATH, self.manifest)
 		dump(self.root / MCP_PATH, self.mcp)
 		dump(self.root / INDEX_PATH, self.index)
 		for stem, entry in self.entries.items():
@@ -57,12 +54,10 @@ class Ctx:
 
 
 def _prepare_root(tmpdir: Path) -> None:
-	(tmpdir / "models" / "providers").mkdir(parents=True)
 	(tmpdir / "models" / "manual").mkdir(parents=True)
 	(tmpdir / "models" / "whitelist").mkdir(parents=True)
 	shutil.copyfile(ROOT / MODEL_PATH, tmpdir / MODEL_PATH)
-	for item in sorted((ROOT / MODEL_PROVIDERS_DIR).glob("*.json")):
-		shutil.copyfile(item, tmpdir / MODEL_PROVIDERS_DIR / item.name)
+	shutil.copyfile(ROOT / MANIFEST_PATH, tmpdir / MANIFEST_PATH)
 	for dirname in ("manual", "whitelist"):
 		for item in sorted((ROOT / "models" / dirname).glob("*.yml")):
 			shutil.copyfile(item, tmpdir / "models" / dirname / item.name)
@@ -91,10 +86,6 @@ def _first_entry(ctx: Ctx) -> str:
 	return sorted(ctx.entries)[0]
 
 
-def _first_model_provider(ctx: Ctx) -> str:
-	return sorted(ctx.model_providers)[0]
-
-
 def duplicate_model_id(ctx: Ctx) -> None:
 	ctx.models["models"].insert(1, copy.deepcopy(ctx.models["models"][0]))
 
@@ -103,26 +94,38 @@ def model_request_headers(ctx: Ctx) -> None:
 	ctx.models["models"][0]["headers"] = {"User-Agent": "injected-by-catalog"}
 
 
-def stale_models_aggregate(ctx: Ctx) -> None:
-	"""Edit a provider source without regenerating the committed aggregate."""
-	provider = _first_model_provider(ctx)
-	ctx.model_providers[provider][0]["name"] = "Renamed Without Regenerate"
-
-
 def hand_edited_models_aggregate(ctx: Ctx) -> None:
-	"""Edit the committed aggregate without touching provider sources."""
-	ctx.models["models"][0]["name"] = "Hand Edited Aggregate"
+	"""Edit the committed aggregate without syncing the manifest."""
+	ctx.models["models"][0]["id"] = f"{ctx.models['models'][0]['id']}-hand-edited"
 
 
-def provider_filename_mismatch(ctx: Ctx) -> None:
-	provider = _first_model_provider(ctx)
-	ctx.model_providers[provider][0]["provider"] = "renamed-provider-id"
+def _first_manifest_provider(ctx: Ctx) -> str:
+	return next(iter(ctx.manifest["admitted"]))
 
 
-def deleted_provider_file(ctx: Ctx) -> None:
-	provider = _first_model_provider(ctx)
-	del ctx.model_providers[provider]
-	(ctx.root / MODEL_PROVIDERS_DIR / f"{provider}.json").unlink()
+def manifest_missing_id(ctx: Ctx) -> None:
+	provider = _first_manifest_provider(ctx)
+	ctx.manifest["admitted"][provider].pop()
+
+
+def manifest_extra_id(ctx: Ctx) -> None:
+	provider = _first_manifest_provider(ctx)
+	ctx.manifest["admitted"][provider].append("stray-model-id")
+
+
+def aggregate_id_not_in_manifest(ctx: Ctx) -> None:
+	model = copy.deepcopy(ctx.models["models"][0])
+	model["id"] = f"{model['id']}-aggregate-only"
+	ctx.models["models"].insert(1, model)
+
+
+def manifest_order_drift(ctx: Ctx) -> None:
+	for ids in ctx.manifest["admitted"].values():
+		if len(ids) >= 2:
+			ids[0], ids[1] = ids[1], ids[0]
+			return
+	provider = _first_manifest_provider(ctx)
+	ctx.manifest["admitted"][provider].append("order-drift-fallback")
 
 
 def duplicate_mcp_server(ctx: Ctx) -> None:
@@ -203,10 +206,11 @@ def deleted_entry_file(ctx: Ctx) -> None:
 CASES: list[tuple[str, Callable[[Ctx], None]]] = [
 	("duplicate-model-id", duplicate_model_id),
 	("model-request-headers", model_request_headers),
-	("stale-models-aggregate", stale_models_aggregate),
 	("hand-edited-models-aggregate", hand_edited_models_aggregate),
-	("provider-filename-mismatch", provider_filename_mismatch),
-	("deleted-provider-file", deleted_provider_file),
+	("manifest-missing-id", manifest_missing_id),
+	("manifest-extra-id", manifest_extra_id),
+	("aggregate-id-not-in-manifest", aggregate_id_not_in_manifest),
+	("manifest-order-drift", manifest_order_drift),
 	("duplicate-mcp-server", duplicate_mcp_server),
 	("bad-catalog-version", bad_catalog_version),
 	("bad-plugins-index-version", bad_plugins_index_version),

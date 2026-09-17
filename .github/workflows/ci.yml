@@ -21,8 +21,6 @@ jobs:
           python-version: '3.12'
       - name: Validate catalogs
         run: python3 scripts/validate_catalogs.py
-      - name: Check models catalog drift
-        run: python3 scripts/generate_models_catalog.py --check
       - name: Check plugins catalog drift
         run: python3 scripts/generate_plugins_catalog.py --check
       - name: Run mutation validation tests
