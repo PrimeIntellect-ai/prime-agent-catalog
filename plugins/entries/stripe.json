@@ -1,0 +1,65 @@
+{
+	"server": "stripe",
+	"service": "stripe",
+	"label": "Stripe",
+	"url": "https://mcp.stripe.com",
+	"description": "Develop your payments integration faster with the ability to create products, prices, and payment links directly in ChatGPT. Run your business from ChatGPT with the ability to retrieve and manage payments, subscriptions, invoices, refunds, disputes, and customers. Build and debug your payment integration quicker than ever by searching the Stripe documentation and getting integration recommendations without needing to leave ChatGPT.",
+	"category": "Finance",
+	"aliases": [],
+	"publisher": "Stripe",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.stripe.com"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://access.stripe.com/mcp",
+			"resource": "https://mcp.stripe.com",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"authorizationServerScopes": [
+				"mcp"
+			],
+			"tokenAuthMethods": [
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.stripe.com",
+				"https://mcp.stripe.com/.well-known/oauth-protected-resource",
+				"https://access.stripe.com/.well-known/oauth-authorization-server/mcp",
+				"https://access.stripe.com/mcp/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "openai-plugins",
+			"repository": "openai/plugins",
+			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
+			"path": "plugins/stripe/.mcp.json",
+			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/stripe/.mcp.json"
+		},
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/stripe/ai.git",
+			"commit": "68382523846ea5bfad75ba1ef58dc5db031d0a5a",
+			"path": "providers/claude/plugin",
+			"url": "https://raw.githubusercontent.com/stripe/ai/68382523846ea5bfad75ba1ef58dc5db031d0a5a/providers/claude/plugin/.mcp.json"
+		}
+	],
+	"homepage": "https://stripe.com",
+	"privacyUrl": "https://stripe.com/privacy",
+	"supportUrl": "https://support.stripe.com"
+}

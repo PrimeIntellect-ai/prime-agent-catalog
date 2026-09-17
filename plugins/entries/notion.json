@@ -1,0 +1,80 @@
+{
+	"server": "notion",
+	"service": "notion",
+	"label": "Notion",
+	"url": "https://mcp.notion.com/mcp",
+	"description": "Notion workflows for implementation planning, research synthesis, meeting preparation, and knowledge capture.",
+	"category": "Productivity",
+	"aliases": [
+		"notion-workspace"
+	],
+	"publisher": "Notion",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.notion.com/mcp"
+	},
+	"auth": {
+		"strategy": "oauth",
+		"clientRegistration": "dynamic",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.notion.com",
+			"resource": "https://mcp.notion.com/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"clientIdMetadataDocument": true,
+			"protectedResourceScopes": [
+				"default"
+			],
+			"authorizationServerScopes": [
+				"default"
+			],
+			"tokenAuthMethods": [
+				"client_secret_basic",
+				"client_secret_post",
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.notion.com/mcp",
+				"https://mcp.notion.com/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.notion.com/.well-known/oauth-protected-resource",
+				"https://mcp.notion.com/.well-known/oauth-authorization-server",
+				"https://mcp.notion.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "metadata-reviewed"
+	},
+	"legacyBuiltin": true,
+	"provenance": [
+		{
+			"source": "openai-plugins",
+			"repository": "openai/plugins",
+			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
+			"path": "plugins/notion/.mcp.json",
+			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/notion/.mcp.json",
+			"license": "MIT"
+		},
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/makenotion/claude-code-notion-plugin.git",
+			"commit": "9847f2aa1a15f25df35ed1fb7b4557dbb60cd651",
+			"url": "https://raw.githubusercontent.com/makenotion/claude-code-notion-plugin/9847f2aa1a15f25df35ed1fb7b4557dbb60cd651/.mcp.json"
+		},
+		{
+			"source": "prime",
+			"note": "legacy built-in integration; OAuth dynamic client registration (plus CIMD) reviewed against public provider metadata"
+		}
+	],
+	"homepage": "https://www.notion.so/",
+	"privacyUrl": "https://www.notion.com/help/privacy",
+	"oauth": {
+		"kind": "oauth"
+	}
+}

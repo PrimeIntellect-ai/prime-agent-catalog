@@ -1,0 +1,62 @@
+{
+	"server": "clickup",
+	"service": "clickup",
+	"label": "ClickUp",
+	"url": "https://mcp.clickup.com/mcp",
+	"description": "Turn Codex into your ClickUp command center.",
+	"category": "Productivity",
+	"aliases": [],
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.clickup.com/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.clickup.com",
+			"resource": "https://mcp.clickup.com/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"read",
+				"write"
+			],
+			"authorizationServerScopes": [
+				"read",
+				"write"
+			],
+			"tokenAuthMethods": [
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.clickup.com/mcp",
+				"https://mcp.clickup.com/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.clickup.com/.well-known/oauth-protected-resource",
+				"https://mcp.clickup.com/.well-known/oauth-authorization-server",
+				"https://mcp.clickup.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "openai-plugins",
+			"repository": "openai/plugins",
+			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
+			"path": "plugins/clickup/.mcp.json",
+			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/clickup/.mcp.json",
+			"license": "MIT"
+		}
+	],
+	"homepage": "https://clickup.com"
+}

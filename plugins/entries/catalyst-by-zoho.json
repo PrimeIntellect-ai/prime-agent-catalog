@@ -1,0 +1,111 @@
+{
+	"server": "catalyst-by-zoho",
+	"service": "zoho-catalyst",
+	"label": "Zoho Catalyst",
+	"url": "https://catalyst.zohomcp.com/mcp/message",
+	"aliases": [
+		"zoho-catalyst"
+	],
+	"publisher": "Zoho Catalyst",
+	"transport": {
+		"type": "http",
+		"url": "https://catalyst.zohomcp.com/mcp/message"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://catalyst.zohomcp.com",
+			"resource": "https://catalyst.zohomcp.com/mcp/message",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"ZohoCatalyst.fullaccess.ALL",
+				"ZohoCatalyst.functions.execute.CUSTOM",
+				"QuickML.projects.READ",
+				"QuickML.pipelines.READ",
+				"QuickML.pipelines.CREATE",
+				"QuickML.pipelines.UPDATE",
+				"QuickML.pipelines.DELETE",
+				"QuickML.datasets.READ",
+				"QuickML.datasets.UPDATE",
+				"QuickML.datasets.DELETE",
+				"QuickML.datasets.CREATE",
+				"QuickML.models.READ",
+				"QuickML.models.UPDATE",
+				"QuickML.models.DELETE",
+				"QuickML.endpoints.CREATE",
+				"QuickML.endpoints.READ",
+				"QuickML.endpoints.UPDATE",
+				"QuickML.endpoints.DELETE",
+				"QuickML.deployment.READ",
+				"QuickML.rag.READ",
+				"QuickML.rag.CREATE",
+				"QuickML.rag.DELETE",
+				"ZohoCatalyst.Slate.app.READ",
+				"ZohoCatalyst.Slate.app.CREATE",
+				"ZohoCatalyst.automationtesting.execute",
+				"ZohoCatalyst.circuits.execute",
+				"ZohoMCP.tool.execute"
+			],
+			"authorizationServerScopes": [
+				"ZohoCatalyst.fullaccess.ALL",
+				"ZohoCatalyst.functions.execute.CUSTOM",
+				"QuickML.projects.READ",
+				"QuickML.pipelines.READ",
+				"QuickML.pipelines.CREATE",
+				"QuickML.pipelines.UPDATE",
+				"QuickML.pipelines.DELETE",
+				"QuickML.datasets.READ",
+				"QuickML.datasets.UPDATE",
+				"QuickML.datasets.DELETE",
+				"QuickML.datasets.CREATE",
+				"QuickML.models.READ",
+				"QuickML.models.UPDATE",
+				"QuickML.models.DELETE",
+				"QuickML.endpoints.CREATE",
+				"QuickML.endpoints.READ",
+				"QuickML.endpoints.UPDATE",
+				"QuickML.endpoints.DELETE",
+				"QuickML.deployment.READ",
+				"QuickML.rag.READ",
+				"QuickML.rag.CREATE",
+				"QuickML.rag.DELETE",
+				"ZohoCatalyst.Slate.app.READ",
+				"ZohoCatalyst.Slate.app.CREATE",
+				"ZohoCatalyst.automationtesting.execute",
+				"ZohoCatalyst.circuits.execute",
+				"ZohoMCP.tool.execute"
+			],
+			"tokenAuthMethods": [
+				"none",
+				"client_secret_post"
+			],
+			"sourceUrls": [
+				"https://catalyst.zohomcp.com/mcp/message",
+				"https://catalyst.zohomcp.com/.well-known/oauth-protected-resource",
+				"https://catalyst.zohomcp.com/.well-known/oauth-protected-resource/mcp/message",
+				"https://catalyst.zohomcp.com/.well-known/oauth-authorization-server",
+				"https://catalyst.zohomcp.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/catalystbyzoho/claude-plugin.git",
+			"commit": "9670b79d72fe4923cc845ca0414d009ef3684ccb",
+			"url": "https://raw.githubusercontent.com/catalystbyzoho/claude-plugin/9670b79d72fe4923cc845ca0414d009ef3684ccb/.mcp.json"
+		}
+	]
+}

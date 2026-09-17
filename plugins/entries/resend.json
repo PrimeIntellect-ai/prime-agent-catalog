@@ -1,0 +1,57 @@
+{
+	"server": "resend",
+	"service": "resend",
+	"label": "Resend",
+	"url": "https://mcp.resend.com/mcp",
+	"aliases": [],
+	"publisher": "Resend",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.resend.com/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://api.resend.com",
+			"resource": "https://mcp.resend.com",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"clientIdMetadataDocument": true,
+			"authorizationServerScopes": [
+				"full_access",
+				"emails:send"
+			],
+			"tokenAuthMethods": [
+				"none",
+				"client_secret_basic",
+				"client_secret_post"
+			],
+			"sourceUrls": [
+				"https://mcp.resend.com/mcp",
+				"https://mcp.resend.com/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.resend.com/.well-known/oauth-protected-resource",
+				"https://api.resend.com/.well-known/oauth-authorization-server",
+				"https://api.resend.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/resend/resend-skills.git",
+			"commit": "5f9f97958a785429ab8e4534d61fe2d712d74e3d",
+			"url": "https://raw.githubusercontent.com/resend/resend-skills/5f9f97958a785429ab8e4534d61fe2d712d74e3d/.claude-plugin/plugin.json"
+		}
+	]
+}

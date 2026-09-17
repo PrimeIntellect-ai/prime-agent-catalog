@@ -1,0 +1,65 @@
+{
+	"server": "fullstory",
+	"service": "fullstory",
+	"label": "Fullstory",
+	"url": "https://api.fullstory.com/mcp/fullstory",
+	"aliases": [],
+	"publisher": "Fullstory",
+	"transport": {
+		"type": "http",
+		"url": "https://api.fullstory.com/mcp/fullstory"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://auth.fullstory.com",
+			"resource": "https://api.fullstory.com/mcp/fullstory",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"protectedResourceScopes": [
+				"playback:read",
+				"search:read",
+				"search.metadata:read",
+				"sessions:read",
+				"metrics:read",
+				"metrics.funnel:read",
+				"metrics.page:read",
+				"library.objects:read",
+				"playback.spec:read",
+				"playback.page.definitions:read",
+				"specs.mappings:read",
+				"settings.own:read",
+				"settings.own:write"
+			],
+			"tokenAuthMethods": [
+				"none"
+			],
+			"sourceUrls": [
+				"https://api.fullstory.com/mcp/fullstory",
+				"https://api.fullstory.com/.well-known/oauth-protected-resource/mcp/fullstory",
+				"https://api.fullstory.com/.well-known/oauth-protected-resource",
+				"https://auth.fullstory.com/.well-known/oauth-authorization-server",
+				"https://auth.fullstory.com/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/fullstorydev/fullstory-skills.git",
+			"commit": "b20614e2d08d7a7c70775bb62b5af640f60b024b",
+			"url": "https://raw.githubusercontent.com/fullstorydev/fullstory-skills/b20614e2d08d7a7c70775bb62b5af640f60b024b/.mcp.json"
+		}
+	]
+}

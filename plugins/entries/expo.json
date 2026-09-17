@@ -1,0 +1,61 @@
+{
+	"server": "expo",
+	"service": "expo",
+	"label": "Expo",
+	"url": "https://mcp.expo.dev/mcp",
+	"aliases": [],
+	"publisher": "Expo",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.expo.dev/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.expo.dev",
+			"resource": "https://mcp.expo.dev/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"clientIdMetadataDocument": true,
+			"protectedResourceScopes": [
+				"mcp:access"
+			],
+			"authorizationServerScopes": [
+				"mcp:access"
+			],
+			"tokenAuthMethods": [
+				"client_secret_basic",
+				"client_secret_post",
+				"private_key_jwt",
+				"none"
+			],
+			"sourceUrls": [
+				"https://mcp.expo.dev/mcp",
+				"https://mcp.expo.dev/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.expo.dev/.well-known/oauth-protected-resource",
+				"https://mcp.expo.dev/.well-known/oauth-authorization-server",
+				"https://mcp.expo.dev/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/expo/skills.git",
+			"commit": "170589a7ee8963156f63de8202fa96cf08a9e610",
+			"path": "plugins/expo",
+			"url": "https://raw.githubusercontent.com/expo/skills/170589a7ee8963156f63de8202fa96cf08a9e610/plugins/expo/.mcp.json"
+		}
+	]
+}

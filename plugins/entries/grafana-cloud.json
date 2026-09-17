@@ -1,0 +1,67 @@
+{
+	"server": "grafana-cloud",
+	"service": "grafana",
+	"label": "Grafana",
+	"url": "https://mcp.grafana.com/mcp",
+	"aliases": [
+		"grafana",
+		"grafana-cloud-mcp"
+	],
+	"publisher": "Grafana",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.grafana.com/mcp"
+	},
+	"auth": {
+		"strategy": "unknown",
+		"clientRegistration": "unknown",
+		"metadata": {
+			"status": "available",
+			"authorizationServer": "https://mcp.grafana.com/mcp",
+			"resource": "https://mcp.grafana.com/mcp",
+			"pkceS256": true,
+			"dynamicClientRegistration": true,
+			"clientIdMetadataDocument": true,
+			"protectedResourceScopes": [
+				"grafana:read",
+				"grafana:query",
+				"grafana:write"
+			],
+			"authorizationServerScopes": [
+				"grafana:read",
+				"grafana:query",
+				"grafana:write"
+			],
+			"tokenAuthMethods": [
+				"none",
+				"client_secret_basic",
+				"client_secret_post"
+			],
+			"sourceUrls": [
+				"https://mcp.grafana.com/mcp",
+				"https://mcp.grafana.com/.well-known/oauth-protected-resource/mcp",
+				"https://mcp.grafana.com/.well-known/oauth-protected-resource",
+				"https://mcp.grafana.com/.well-known/oauth-authorization-server/mcp",
+				"https://mcp.grafana.com/mcp/.well-known/openid-configuration"
+			],
+			"fetchedAt": "2026-09-12"
+		}
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "claude-plugins-official",
+			"repository": "https://github.com/grafana/ai-marketplace.git",
+			"commit": "12be5634a492f73c189d466c5449d09b853ad7a4",
+			"path": "plugins/grafana-cloud-mcp",
+			"url": "https://raw.githubusercontent.com/grafana/ai-marketplace/12be5634a492f73c189d466c5449d09b853ad7a4/plugins/grafana-cloud-mcp/.mcp.json"
+		}
+	]
+}
