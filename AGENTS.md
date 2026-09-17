@@ -87,6 +87,17 @@ whitelist-safe:
 - Deletions are always manual, reviewed PRs.
 - prime-inference is never synced here; clients fetch it live with credentials.
 
+Run the exporter from a `PrimeIntellect-ai/prime-agent` checkout:
+
+```bash
+cd /path/to/prime-agent/packages/ai
+npm run catalog:export -- /path/to/prime-agent-catalog
+```
+
+The root `sync-policy.json` is the PR-reviewed growth policy. Keep `allowNew`
+empty for refresh-only providers. Add globs there only when the PR intends to
+admit matching new upstream model ids.
+
 ## Invariants
 
 - Never hand-edit aggregates; never bypass the drift gate.

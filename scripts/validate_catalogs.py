@@ -71,6 +71,7 @@ MODEL_KEYS = {
     "contextWindow",
     "maxTokens",
     "featured",
+    "headers",
     "compat",
 }
 MODEL_REQUIRED_KEYS = ["id", "name", "api", "provider", "baseUrl", "reasoning", "input", "cost", "contextWindow", "maxTokens"]
@@ -408,6 +409,16 @@ def _validate_model_entry(model: Any, location: str, errors: list[str]) -> tuple
                     _error(errors, location, f"thinkingLevelMap.{key} must be null or a non-empty string <= 128 chars")
     if "featured" in model and not isinstance(model["featured"], bool):
         _error(errors, location, "featured must be boolean")
+    headers = model.get("headers")
+    if headers is not None:
+        if not isinstance(headers, dict):
+            _error(errors, location, "headers must be an object")
+        else:
+            for key, value in headers.items():
+                if not _is_clean_string(key, 1, 256):
+                    _error(errors, location, "headers keys must be clean non-empty strings <= 256 chars")
+                if not _is_clean_string(value, 1, 1024):
+                    _error(errors, location, f"headers.{key} must be a clean non-empty string <= 1024 chars")
     if "compat" in model and isinstance(api, str):
         _validate_compat(api, model["compat"], location, errors)
     if isinstance(provider, str) and isinstance(model_id, str):

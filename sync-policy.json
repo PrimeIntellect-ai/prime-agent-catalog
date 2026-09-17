@@ -1,0 +1,17 @@
+{
+	"openrouter": {
+		"allowNew": []
+	},
+	"vercel-ai-gateway": {
+		"allowNew": []
+	},
+	"huggingface": {
+		"allowNew": []
+	},
+	"moonshotai": {
+		"allowNew": []
+	},
+	"moonshotai-cn": {
+		"allowNew": []
+	}
+}
