@@ -99,6 +99,9 @@ providers:
 with no synced upstream. Manual providers are emitted verbatim by the exporter
 and are never synced.
 
+Current policy inventory: `models/whitelist/` contains 30 synced providers;
+`models/manual/` contains only `openai-codex.yml`.
+
 The Python catalog tooling remains stdlib-only and never parses `whitelist/` or
 `manual/`; it validates only the generated JSON provider files and aggregates.
 prime-inference is never synced here; clients fetch it live with credentials.
