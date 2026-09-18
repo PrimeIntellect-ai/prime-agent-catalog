@@ -11,41 +11,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://backboard.railway.com",
-			"resource": "https://mcp.railway.com",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"openid",
-				"profile",
-				"email",
-				"offline_access",
-				"workspace:member"
-			],
-			"authorizationServerScopes": [
-				"openid",
-				"profile",
-				"email",
-				"offline_access",
-				"workspace:member"
-			],
-			"tokenAuthMethods": [
-				"client_secret_basic",
-				"client_secret_post",
-				"none",
-				"private_key_jwt"
-			],
-			"sourceUrls": [
-				"https://mcp.railway.com",
-				"https://mcp.railway.com/.well-known/oauth-protected-resource",
-				"https://backboard.railway.com/.well-known/oauth-authorization-server",
-				"https://backboard.railway.com/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -57,11 +23,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/railwayapp/railway-skills.git",
-			"commit": "950acebcef3445f3915ea0709876c3ba9c237a7f",
-			"path": "plugins/railway",
-			"url": "https://raw.githubusercontent.com/railwayapp/railway-skills/950acebcef3445f3915ea0709876c3ba9c237a7f/plugins/railway/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

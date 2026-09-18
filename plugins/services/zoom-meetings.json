@@ -17,35 +17,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://zoom.us",
-			"resource": "https://mcp.zoom.us/mcp/meeting/streamable",
-			"pkceS256": true,
-			"protectedResourceScopes": [
-				"meeting:write:meeting",
-				"meeting:read:search",
-				"meeting:delete:meeting",
-				"meeting:update:in_meeting_controls",
-				"meeting:update:meeting",
-				"meeting:read:assets",
-				"cloud_recording:read:list_user_recordings",
-				"cloud_recording:read:content"
-			],
-			"tokenAuthMethods": [
-				"client_secret_basic"
-			],
-			"sourceUrls": [
-				"https://mcp.zoom.us/mcp/meeting/streamable",
-				"https://zoom.us/.well-known/oauth-protected-resource/mcp/meeting/streamable",
-				"https://mcp.zoom.us/.well-known/oauth-protected-resource/mcp/meeting/streamable",
-				"https://mcp.zoom.us/.well-known/oauth-protected-resource",
-				"https://zoom.us/.well-known/oauth-authorization-server",
-				"https://zoom.us/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "requires-setup",
@@ -68,22 +40,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "openai-plugins",
-			"repository": "openai/plugins",
-			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
-			"path": "plugins/zoom/.mcp.json",
-			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/zoom/.mcp.json",
-			"license": "MIT"
-		},
-		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/zoom/zoom-plugin.git",
-			"commit": "9311dd4b31e8e55c27b95479a84601576e449e97",
-			"url": "https://raw.githubusercontent.com/zoom/zoom-plugin/9311dd4b31e8e55c27b95479a84601576e449e97/.mcp.json"
-		},
-		{
-			"source": "prime",
-			"note": "the upstream OpenAI zoom plugin targets the Zoom meetings MCP endpoint; renamed to keep the general zoom endpoint distinct"
+			"source": "prime"
 		}
 	],
 	"homepage": "https://zoom.us",

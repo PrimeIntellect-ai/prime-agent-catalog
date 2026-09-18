@@ -15,38 +15,7 @@
 	},
 	"auth": {
 		"strategy": "oauth",
-		"clientRegistration": "dynamic",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp.linear.app",
-			"resource": "https://mcp.linear.app/mcp",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"clientIdMetadataDocument": true,
-			"protectedResourceScopes": [
-				"read",
-				"write"
-			],
-			"authorizationServerScopes": [
-				"read",
-				"write",
-				"openid",
-				"email"
-			],
-			"tokenAuthMethods": [
-				"client_secret_basic",
-				"client_secret_post",
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.linear.app/mcp",
-				"https://mcp.linear.app/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.linear.app/.well-known/oauth-protected-resource",
-				"https://mcp.linear.app/.well-known/oauth-authorization-server",
-				"https://mcp.linear.app/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "dynamic"
 	},
 	"setup": {
 		"status": "ready",
@@ -58,23 +27,7 @@
 	"legacyBuiltin": true,
 	"provenance": [
 		{
-			"source": "openai-plugins",
-			"repository": "openai/plugins",
-			"commit": "1dc195897af4161d039b80d8471ec0a10c9bbc89",
-			"path": "plugins/linear/.mcp.json",
-			"url": "https://raw.githubusercontent.com/openai/plugins/1dc195897af4161d039b80d8471ec0a10c9bbc89/plugins/linear/.mcp.json",
-			"license": "MIT"
-		},
-		{
-			"source": "claude-plugins-official",
-			"repository": "anthropics/claude-plugins-official",
-			"commit": "3deb821cb71ccfaaf2ffa9935e977df314ce5cd5",
-			"path": "./external_plugins/linear",
-			"url": "https://raw.githubusercontent.com/anthropics/claude-plugins-official/3deb821cb71ccfaaf2ffa9935e977df314ce5cd5/external_plugins/linear/.mcp.json"
-		},
-		{
-			"source": "prime",
-			"note": "legacy built-in integration; OAuth dynamic client registration (plus CIMD) reviewed against public provider metadata"
+			"source": "prime"
 		}
 	],
 	"homepage": "https://linear.app/",

@@ -11,89 +11,7 @@
 	},
 	"auth": {
 		"strategy": "api_key",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp.pagerduty.com/",
-			"resource": "https://mcp.pagerduty.com/mcp",
-			"pkceS256": true,
-			"protectedResourceScopes": [
-				"incidents.read",
-				"extension_schemas.read",
-				"subscribers.write",
-				"users:sessions.write",
-				"recommendations.write",
-				"recommendations.read",
-				"none",
-				"users:contact_methods.read",
-				"users.write",
-				"templates.read",
-				"incident_types.read",
-				"jira_cloud_rules.read",
-				"workflow_integrations:connections.write",
-				"session_configurations.write",
-				"addons.write",
-				"oncalls.read",
-				"standards.write",
-				"users:contact_methods.write",
-				"users.read",
-				"incident_workflows.write",
-				"notifications.read",
-				"workflow_integrations:connections.read",
-				"copilot:chat.write",
-				"write",
-				"incident_types.write",
-				"contextual_data.write",
-				"event_orchestrations.read",
-				"read",
-				"webhook_subscriptions.write",
-				"openid"
-			],
-			"authorizationServerScopes": [
-				"incidents.read",
-				"extension_schemas.read",
-				"subscribers.write",
-				"users:sessions.write",
-				"recommendations.write",
-				"recommendations.read",
-				"none",
-				"users:contact_methods.read",
-				"users.write",
-				"templates.read",
-				"incident_types.read",
-				"jira_cloud_rules.read",
-				"workflow_integrations:connections.write",
-				"session_configurations.write",
-				"addons.write",
-				"oncalls.read",
-				"standards.write",
-				"users:contact_methods.write",
-				"users.read",
-				"incident_workflows.write",
-				"notifications.read",
-				"workflow_integrations:connections.read",
-				"copilot:chat.write",
-				"write",
-				"incident_types.write",
-				"contextual_data.write",
-				"event_orchestrations.read",
-				"read",
-				"webhook_subscriptions.write",
-				"openid"
-			],
-			"tokenAuthMethods": [
-				"client_secret_post",
-				"client_secret_basic"
-			],
-			"sourceUrls": [
-				"https://mcp.pagerduty.com/mcp",
-				"https://mcp.pagerduty.com/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.pagerduty.com/.well-known/oauth-protected-resource",
-				"https://mcp.pagerduty.com/.well-known/oauth-authorization-server",
-				"https://mcp.pagerduty.com/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "requires-setup",
@@ -116,14 +34,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/PagerDuty/claude-code-plugins.git",
-			"commit": "761cba75bd50fd561405c3b173ecf36084432089",
-			"url": "https://raw.githubusercontent.com/PagerDuty/claude-code-plugins/761cba75bd50fd561405c3b173ecf36084432089/.mcp.json"
-		},
-		{
-			"source": "prime",
-			"note": "curated override applied; see mcp-catalog/overrides.json"
+			"source": "prime"
 		}
 	]
 }

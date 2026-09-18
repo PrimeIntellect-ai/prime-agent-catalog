@@ -13,75 +13,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://logfire-us.pydantic.dev",
-			"resource": "https://logfire-us.pydantic.dev/mcp",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"clientIdMetadataDocument": true,
-			"protectedResourceScopes": [
-				"organization:create_project",
-				"organization:read_channel",
-				"organization:write_channel",
-				"project:read",
-				"project:read_alert",
-				"project:read_dashboard",
-				"project:read_variables",
-				"project:trigger_workflow",
-				"project:write",
-				"project:write_alert",
-				"project:write_dashboard",
-				"project:write_token",
-				"project:write_variables"
-			],
-			"authorizationServerScopes": [
-				"instance:admin",
-				"instance:billing",
-				"organization:admin",
-				"organization:read",
-				"organization:write",
-				"organization:create_project",
-				"organization:read_member",
-				"organization:write_member",
-				"organization:read_channel",
-				"organization:write_channel",
-				"organization:create_api_key",
-				"organization:read_api_key",
-				"organization:write_api_key",
-				"organization:read_invitation",
-				"organization:write_invitation",
-				"project:read",
-				"project:write",
-				"project:write_token",
-				"project:read_token",
-				"project:read_dashboard",
-				"project:write_dashboard",
-				"project:trigger_workflow",
-				"project:read_alert",
-				"project:write_alert",
-				"project:read_datasets",
-				"project:write_datasets",
-				"project:read_variables",
-				"project:write_variables",
-				"project:read_external_variables",
-				"project:gateway_proxy"
-			],
-			"tokenAuthMethods": [
-				"client_secret_post",
-				"client_secret_basic",
-				"none"
-			],
-			"sourceUrls": [
-				"https://logfire-us.pydantic.dev/mcp",
-				"https://logfire-us.pydantic.dev/.well-known/oauth-protected-resource/mcp",
-				"https://logfire-us.pydantic.dev/.well-known/oauth-protected-resource",
-				"https://logfire-us.pydantic.dev/.well-known/oauth-authorization-server",
-				"https://logfire-us.pydantic.dev/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -93,11 +25,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/pydantic/skills.git",
-			"commit": "9e9390ee24d44b32cf5379c58acaebd7563f5f86",
-			"path": "plugins/logfire",
-			"url": "https://raw.githubusercontent.com/pydantic/skills/9e9390ee24d44b32cf5379c58acaebd7563f5f86/plugins/logfire/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

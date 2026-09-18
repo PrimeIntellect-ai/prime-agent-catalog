@@ -13,30 +13,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://goshippo.com",
-			"resource": "https://mcp.shippo.com",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"*"
-			],
-			"authorizationServerScopes": [
-				"*"
-			],
-			"tokenAuthMethods": [
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.shippo.com",
-				"https://mcp.shippo.com/.well-known/oauth-protected-resource",
-				"https://goshippo.com/.well-known/oauth-authorization-server",
-				"https://goshippo.com/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -48,11 +25,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/goshippo/ai.git",
-			"commit": "15cbb6364fbcfd465a134f5972da9179436d0787",
-			"path": "providers/claude/plugin",
-			"url": "https://raw.githubusercontent.com/goshippo/ai/15cbb6364fbcfd465a134f5972da9179436d0787/providers/claude/plugin/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

@@ -13,35 +13,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://mcp.revenuecat.ai",
-			"resource": "https://mcp.revenuecat.ai/mcp",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"protectedResourceScopes": [
-				"*:*:read",
-				"*:*:read_write"
-			],
-			"authorizationServerScopes": [
-				"*:*:read",
-				"*:*:read_write"
-			],
-			"tokenAuthMethods": [
-				"client_secret_basic",
-				"client_secret_post",
-				"none"
-			],
-			"sourceUrls": [
-				"https://mcp.revenuecat.ai/mcp",
-				"https://mcp.revenuecat.ai/.well-known/oauth-protected-resource/mcp",
-				"https://mcp.revenuecat.ai/.well-known/oauth-protected-resource",
-				"https://mcp.revenuecat.ai/.well-known/oauth-authorization-server",
-				"https://mcp.revenuecat.ai/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -53,16 +25,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/RevenueCat/rc-claude-code-plugin.git",
-			"commit": "b9b77b12da33213c9c2e750b06cd6270c1d8ed65",
-			"url": "https://raw.githubusercontent.com/RevenueCat/rc-claude-code-plugin/b9b77b12da33213c9c2e750b06cd6270c1d8ed65/revenuecat/.mcp.json"
-		},
-		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/RevenueCat/rc-claude-code-plugin.git",
-			"commit": "b9b77b12da33213c9c2e750b06cd6270c1d8ed65",
-			"url": "https://raw.githubusercontent.com/RevenueCat/rc-claude-code-plugin/b9b77b12da33213c9c2e750b06cd6270c1d8ed65/revenuecat/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

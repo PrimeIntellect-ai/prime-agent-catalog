@@ -11,27 +11,7 @@
 	},
 	"auth": {
 		"strategy": "unknown",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://app.gc.ai/",
-			"resource": "https://app.gc.ai/api/mcp",
-			"pkceS256": true,
-			"dynamicClientRegistration": true,
-			"tokenAuthMethods": [
-				"none",
-				"client_secret_basic",
-				"client_secret_post"
-			],
-			"sourceUrls": [
-				"https://app.gc.ai/api/mcp",
-				"https://app.gc.ai/.well-known/oauth-protected-resource/api/mcp",
-				"https://app.gc.ai/.well-known/oauth-protected-resource",
-				"https://app.gc.ai/.well-known/oauth-authorization-server",
-				"https://app.gc.ai/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "ready",
@@ -43,10 +23,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/GC-AI-Inc/gc-ai-claude-plugin.git",
-			"commit": "efda779972c7b7162e79234e164bc2f359a8a518",
-			"url": "https://raw.githubusercontent.com/GC-AI-Inc/gc-ai-claude-plugin/efda779972c7b7162e79234e164bc2f359a8a518/.mcp.json"
+			"source": "prime"
 		}
 	]
 }

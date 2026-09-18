@@ -15,42 +15,7 @@
 	},
 	"auth": {
 		"strategy": "api_key",
-		"clientRegistration": "unknown",
-		"metadata": {
-			"status": "available",
-			"authorizationServer": "https://zoom.us",
-			"resource": "https://mcp.zoom.us/mcp/chat/streamable",
-			"pkceS256": true,
-			"protectedResourceScopes": [
-				"team_chat:read:list_user_messages",
-				"team_chat:update:user_message",
-				"team_chat:read:list_user_sessions",
-				"team_chat:write:contact_information",
-				"team_chat:update:user_channel",
-				"chat_channel:read",
-				"chat_channel:write",
-				"team_chat:read:channel",
-				"team_chat:read:list_contacts",
-				"team_chat:write:members",
-				"team_chat:write:user_message",
-				"team_chat:read:list_user_channels",
-				"team_chat:read:list_members",
-				"team_chat:write:user_channel",
-				"team_chat:update:channel_member_role",
-				"team_chat:read:list_user_files"
-			],
-			"tokenAuthMethods": [
-				"client_secret_basic"
-			],
-			"sourceUrls": [
-				"https://mcp.zoom.us/mcp/chat/streamable",
-				"https://mcp.zoom.us/.well-known/oauth-protected-resource/mcp/chat/streamable",
-				"https://mcp.zoom.us/.well-known/oauth-protected-resource",
-				"https://zoom.us/.well-known/oauth-authorization-server",
-				"https://zoom.us/.well-known/openid-configuration"
-			],
-			"fetchedAt": "2026-09-12"
-		}
+		"clientRegistration": "unknown"
 	},
 	"setup": {
 		"status": "requires-setup",
@@ -73,14 +38,7 @@
 	"legacyBuiltin": false,
 	"provenance": [
 		{
-			"source": "claude-plugins-official",
-			"repository": "https://github.com/zoom/zoom-plugin.git",
-			"commit": "9311dd4b31e8e55c27b95479a84601576e449e97",
-			"url": "https://raw.githubusercontent.com/zoom/zoom-plugin/9311dd4b31e8e55c27b95479a84601576e449e97/.mcp.json"
-		},
-		{
-			"source": "prime",
-			"note": "curated override applied; see mcp-catalog/overrides.json"
+			"source": "prime"
 		}
 	]
 }
