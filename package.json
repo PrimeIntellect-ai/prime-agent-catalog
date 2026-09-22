@@ -3,9 +3,21 @@
 	"private": true,
 	"version": "0.0.0",
 	"description": "Public catalog artifacts for Prime Agent models and MCP services.",
+	"type": "module",
 	"scripts": {
 		"validate": "python3 scripts/validate_catalogs.py",
 		"test": "python3 scripts/validate_catalogs.py && python3 scripts/test_mutation_validation.py && python3 scripts/test_check_pr_title.py",
-		"generate": "python3 scripts/generate_plugins_catalog.py"
+		"generate": "python3 scripts/generate_plugins_catalog.py",
+		"catalog:export": "tsx exporter/generate-models.ts --catalog-out .",
+		"exporter:typecheck": "tsc --noEmit -p exporter/tsconfig.json"
+	},
+	"devDependencies": {
+		"@types/node": "^26.6.2",
+		"tsx": "^4.20.0",
+		"typescript": "^5.9.0",
+		"yaml": "^2.9.0"
+	},
+	"engines": {
+		"node": ">=20.0.0"
 	}
 }

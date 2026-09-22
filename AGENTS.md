@@ -16,6 +16,10 @@ plugins/
   services/<server>.json          # EDITABLE truth: one MCP service entry per file
   catalog.v2.json                 # GENERATED aggregate; the client-fetched plugin artifact
   examples/                       # user-facing local-services authoring example
+exporter/
+  generate-models.ts              # the models exporter: upstream fetch + mapping knowledge
+  vendor/                         # its trimmed type/constant deps (no client behavior)
+  tsconfig.json                   # exporter typecheck (npm run exporter:typecheck)
 scripts/
   generate_plugins_catalog.py     # builds plugins/catalog.v2.json; --check = drift gate
   validate_catalogs.py            # structural + security validation, Python stdlib only
@@ -27,15 +31,15 @@ SECURITY.md                       # production trust boundary + required repo se
 
 ## Authoring rules
 
-- Synced models: edit `models/whitelist/<provider>.yml`, then run the Prime Agent exporter.
-- Manual models: edit `models/manual/<provider>.yml`, then run the Prime Agent exporter.
-- The model flow is `models/whitelist/*.yml` plus `models/manual/*.yml` through the Prime Agent TypeScript exporter to `models/catalog.v1.json` plus `models/admission-manifest.v1.json`.
+- Synced models: edit `models/whitelist/<provider>.yml`, then run `npm run catalog:export` in this repo.
+- Manual models: edit `models/manual/<provider>.yml`, then run `npm run catalog:export` in this repo.
+- The model flow is `models/whitelist/*.yml` plus `models/manual/*.yml` through `exporter/generate-models.ts` to `models/catalog.v1.json` plus `models/admission-manifest.v1.json`.
 - The old `models/providers/` layer is gone. `scripts/generate_models_catalog.py` is retired.
 - The admission manifest is the CI id-set accident check and the sync review surface. It records the exact admitted ids per provider in aggregate order.
 - Never hand-edit `models/catalog.v1.json` or `models/admission-manifest.v1.json`. Hand-editing the aggregate without a sync run fails CI via manifest mismatch.
 - Plugins: edit `plugins/services/<server>.json`, then regenerate. `scripts/generate_plugins_catalog.py` hardcodes `PLUGINS_CATALOG_VERSION = 2`; there is no `plugins/index.json`.
 - Never hand-edit `plugins/catalog.v2.json`; it is regenerated and drift fails CI.
-- All JSON is canonical: tab-indented, deterministic key order, trailing newline. YAML is parsed only by the Prime Agent TypeScript exporter, not by this repository's Python tooling.
+- All JSON is canonical: tab-indented, deterministic key order, trailing newline. YAML is parsed only by the TypeScript exporter under `exporter/`, not by this repository's Python tooling.
 - Each `models/*/<provider>.yml` file is per provider. Each `plugins/services/<server>.json` file is one connector = one server id; several files can share a service brand (for example, the zoom family: `zoom`, `zoom-chat`, `zoom-meetings`, `zoom-tasks`, `zoom-whiteboard`, and `zoom-canvas` all carry `service: zoom`).
 - Plugin source files keep only working client data; the import-time audit dossier (`sources`, `auth.metadata`, `auth.alternatives`, detailed provenance) was stripped because git history preserves the audit evidence.
 
@@ -46,8 +50,11 @@ python3 -m py_compile scripts/validate_catalogs.py scripts/generate_plugins_cata
 python3 scripts/validate_catalogs.py
 python3 scripts/generate_plugins_catalog.py --check
 python3 scripts/test_mutation_validation.py
-npm run generate   # plugins generator only
-npm test            # validate + mutation tests
+npm run generate        # plugins generator only
+npm test                # validate + mutation tests
+npm install             # once, for the exporter toolchain (yaml, tsx, typescript)
+npm run catalog:export  # regenerate catalog.v1.json + admission-manifest from live upstreams
+npm run exporter:typecheck
 ```
 
 ## Validation (enforced by CI)
@@ -101,7 +108,18 @@ Model changes are tracked one model per PR, named for greppability:
 
 ## Syncing from provider catalog endpoints
 
-Gateway providers (OpenRouter, Vercel AI Gateway, models.dev-sourced providers) publish catalog endpoints. `PrimeIntellect-ai/prime-agent` carries all per-provider fetch and mapping knowledge in `packages/ai/scripts/generate-models.ts`; run it with `--catalog-out <this-repo>` to export the model aggregate and admission manifest here.
+This repository is self-sufficient: `exporter/generate-models.ts` (plus its
+vendored type/constant deps) lives here and carries all per-provider fetch
+and mapping knowledge. It fetches models.dev (including its `vercel` slug
+for the Vercel AI Gateway) and the OpenRouter API, applies the admission
+policy, and regenerates the model aggregate and admission manifest in place.
+The prime-agent client only consumes the generated artifacts — no catalog
+data logic lives there.
+
+Run `npm run catalog:export` from the repo root after editing whitelist or
+manual policy files. The exporter never runs in CI: it hits live upstreams
+(non-deterministic), so syncs are maintainer-run commits validated by the
+Python suite.
 
 `models/whitelist/<provider>.yml` is the PR-reviewed admission policy for synced providers:
 
@@ -115,13 +133,13 @@ Gateway providers (OpenRouter, Vercel AI Gateway, models.dev-sourced providers) 
 
 Current policy inventory: `models/whitelist/` contains 30 synced providers; `models/manual/` contains only `openai-codex.yml`.
 
-The Python catalog tooling remains stdlib-only and never parses `whitelist/` or `manual/`; it validates only the committed model aggregate and admission manifest. prime-inference is never synced here; clients fetch it live with credentials.
+The Python catalog tooling remains stdlib-only and never parses `whitelist/` or `manual/`; it validates only the committed model aggregate and admission manifest (the TypeScript exporter under `exporter/` is the YAML-reading generator). prime-inference is never synced here; clients fetch it live with credentials.
 
-Run the exporter from a `PrimeIntellect-ai/prime-agent` checkout:
+Run the exporter from this repository:
 
 ```bash
-cd /path/to/prime-agent/packages/ai
-npm run catalog:export -- /path/to/prime-agent-catalog
+npm install
+npm run catalog:export
 ```
 
 ## Adding a model — decision rules for agents
@@ -165,7 +183,7 @@ Follow this order. Every rule exists because a failure mode was observed.
    deletion path) and run the exporter — it disappears from the aggregate and
    manifest together. Never edit the generated artifacts directly.
 8. **New synced provider:** needs an exporter mapping block in
-   `packages/ai/scripts/generate-models.ts` (api/baseUrl/compat knowledge)
+   `exporter/generate-models.ts` (api/baseUrl/compat knowledge)
    plus a new whitelist yml with a `source` the exporter recognizes — a mismatch
    is a hard error. Then the same flow as 3.
 
