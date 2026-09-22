@@ -110,8 +110,8 @@ Model changes are tracked one model per PR, named for greppability:
 
 This repository is self-sufficient: `exporter/generate-models.ts` (plus its
 vendored type/constant deps) lives here and carries all per-provider fetch
-and mapping knowledge. It fetches models.dev, the OpenRouter API, the Vercel
-AI Gateway, and the public Prime Inference catalog, applies the admission
+and mapping knowledge. It fetches models.dev (including its `vercel` slug
+for the Vercel AI Gateway) and the OpenRouter API, applies the admission
 policy, and regenerates the model aggregate and admission manifest in place.
 The prime-agent client only consumes the generated artifacts — no catalog
 data logic lives there.

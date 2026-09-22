@@ -1,10 +1,14 @@
 #!/usr/bin/env tsx
 /**
- * The prime-agent-catalog models exporter: fetches models.dev, OpenRouter,
- * the Vercel AI Gateway, and the public Prime Inference catalog, applies the
- * per-provider mapping knowledge and admission policy (models/whitelist +
- * models/manual), and regenerates models/catalog.v1.json +
- * models/admission-manifest.v1.json in THIS repository.
+ * The prime-agent-catalog models exporter: fetches models.dev (including its
+ * `vercel` slug for the Vercel AI Gateway) and the OpenRouter API, applies
+ * the per-provider mapping knowledge and admission policy
+ * (models/whitelist + models/manual), and regenerates
+ * models/catalog.v1.json + models/admission-manifest.v1.json in THIS
+ * repository.
+ *
+ * Prime Inference is never synced here: clients fetch it live with
+ * credentials and ship their own compiled offline fallback.
  *
  * The catalog repo is self-sufficient: this exporter and its vendored
  * mapping deps live here; the prime-agent client only consumes the
