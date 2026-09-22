@@ -64,6 +64,34 @@ npm test            # validate + mutation tests
 
 `scripts/test_mutation_validation.py` mutates fresh copies and asserts the validator rejects: duplicate ids, model request headers, bad versions, embedded secrets, credential and private URLs, OAuth client id/secret, malformed transports, count/order drift, stale plugin aggregates, hand-edited aggregates, manifest missing/extra/order-drift ids, filename mismatches, deleted plugin source files, stripped dossier fields, top-level `sources`, and missing provenance.
 
+## PR and commit conventions (tracking contract)
+
+Model changes are tracked one model per PR, named for greppability:
+
+- Add a model: title and commit subject `add model: <model-id>` (for example
+  `add model: claude-opus-5-5`), branch `add-model/<model-id>`. The PR covers
+  every provider surface for that one model — whitelist ids, manual entries,
+  and the regenerated aggregate + manifest together.
+- Remove a model: `remove model: <model-id>`, branch `remove-model/<model-id>`.
+- Cross-cutting regenerations that no single model owns (upstream drift,
+  exporter fixes that change derived data, sync-blocker repairs): prefix
+  `sync:` — for example `sync: refresh catalog from live upstreams`, branch
+  `sync/<topic>`.
+- Repo-process or CI changes: prefix `ci:` — for example `ci: enforce the
+  pr title convention`, branch `ci/<topic>`.
+- Stack per-model PRs when the aggregate would conflict: base the second
+  model's branch on the first model's branch (and so on). GitHub retargets
+  the stack automatically as each PR merges; never force-push to unstitch it.
+- A PR body states: the surfaces added, the exporter commit that produced the
+  generated artifacts, and the validation results (`npm test`).
+- The title formats are enforced: ci.yml runs `scripts/check_pr_title.py` on
+  every PR whose diff touches `models/` and fails the build on a non-matching
+  title; `scripts/test_check_pr_title.py` guards the matcher.
+- The client repo (PrimeIntellect-ai/prime-agent) uses `models: add <ids>`
+  for compiled-catalog regenerations; its compiled catalog is one generated
+  artifact, so batching several models in one client PR is fine — the
+  per-model tracking unit lives here.
+
 ## Syncing from provider catalog endpoints
 
 Gateway providers (OpenRouter, Vercel AI Gateway, models.dev-sourced providers) publish catalog endpoints. `PrimeIntellect-ai/prime-agent` carries all per-provider fetch and mapping knowledge in `packages/ai/scripts/generate-models.ts`; run it with `--catalog-out <this-repo>` to export the model aggregate and admission manifest here.
