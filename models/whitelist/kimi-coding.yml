@@ -1,6 +1,8 @@
 # Admission policy for kimi-coding.
-# source: kimi-for-coding is the models.dev Kimi coding product.
-source: "kimi-for-coding"
+# source: kimi-code-plan-cn is the models.dev slug for the Kimi coding product
+# deployed at api.kimi.com (models.dev renamed the retired kimi-for-coding
+# section; the admitted ids are unchanged).
+source: "kimi-code-plan-cn"
 ids:
   - "k3"
   - "k3-256k"
