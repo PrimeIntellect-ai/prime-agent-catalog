@@ -31,6 +31,7 @@ class Ctx:
 
 	def __init__(self, root: Path) -> None:
 		self.root = root
+		self.defaults = json.loads((root / DEFAULTS_PATH).read_text(encoding="utf-8"))
 		self.models = json.loads((root / MODEL_PATH).read_text(encoding="utf-8"))
 		self.manifest = json.loads((root / MANIFEST_PATH).read_text(encoding="utf-8"))
 		self.mcp = json.loads((root / MCP_PATH).read_text(encoding="utf-8"))
@@ -43,6 +44,7 @@ class Ctx:
 		def dump(path: Path, data: Any) -> None:
 			path.write_text(json.dumps(data, indent="	", ensure_ascii=False) + "\n", encoding="utf-8")
 
+		dump(self.root / DEFAULTS_PATH, self.defaults)
 		dump(self.root / MODEL_PATH, self.models)
 		dump(self.root / MANIFEST_PATH, self.manifest)
 		dump(self.root / MCP_PATH, self.mcp)
@@ -50,9 +52,13 @@ class Ctx:
 			dump(self.root / SERVICES_DIR / f"{stem}.json", entry)
 
 
+DEFAULTS_PATH = Path("defaults.v1.json")
+
+
 def _prepare_root(tmpdir: Path) -> None:
 	(tmpdir / "models" / "manual").mkdir(parents=True)
 	(tmpdir / "models" / "whitelist").mkdir(parents=True)
+	shutil.copyfile(ROOT / DEFAULTS_PATH, tmpdir / DEFAULTS_PATH)
 	shutil.copyfile(ROOT / MODEL_PATH, tmpdir / MODEL_PATH)
 	shutil.copyfile(ROOT / MANIFEST_PATH, tmpdir / MANIFEST_PATH)
 	for dirname in ("manual", "whitelist"):
@@ -215,7 +221,22 @@ def deleted_entry_file(ctx: Ctx) -> None:
 	(ctx.root / SERVICES_DIR / f"{stem}.json").unlink()
 
 
+def defaults_bad_version(ctx: Ctx) -> None:
+	ctx.defaults["schemaVersion"] = 2
+
+
+def defaults_dangling_reference(ctx: Ctx) -> None:
+	ctx.defaults["defaultModel"] = "openai/gpt-does-not-exist"
+
+
+def defaults_bad_selector(ctx: Ctx) -> None:
+	ctx.defaults["defaultModel"] = "not-a-selector"
+
+
 CASES: list[tuple[str, Callable[[Ctx], None]]] = [
+	("defaults-bad-version", defaults_bad_version),
+	("defaults-dangling-reference", defaults_dangling_reference),
+	("defaults-bad-selector", defaults_bad_selector),
 	("duplicate-model-id", duplicate_model_id),
 	("model-request-headers", model_request_headers),
 	("hand-edited-models-aggregate", hand_edited_models_aggregate),

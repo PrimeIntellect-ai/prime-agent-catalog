@@ -23,6 +23,7 @@ from urllib.parse import parse_qsl, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 
 MODEL_CATALOG = Path("models/catalog.v1.json")
+DEFAULT_MODEL_CATALOG = Path("defaults.v1.json")
 MODEL_ADMISSION_MANIFEST = Path("models/admission-manifest.v1.json")
 MCP_CATALOG = Path("plugins/catalog.v2.json")
 PLUGINS_SERVICES_DIR = Path("plugins/services")
@@ -868,6 +869,37 @@ def _validate_plugins_sources(errors: list[str]) -> None:
 		_error(errors, "plugins", f"catalog generation failed: {exc}")
 
 
+def _validate_default_model_catalog(data: Any, errors: list[str]) -> None:
+    path = DEFAULT_MODEL_CATALOG
+    if not isinstance(data, dict):
+        _error(errors, path, "top-level value must be an object")
+        return
+    if list(data.keys()) != ["schemaVersion", "defaultModel"]:
+        _error(errors, path, "top-level keys must remain ['schemaVersion', 'defaultModel'] in that order")
+        return
+    if data.get("schemaVersion") != 1:
+        _error(errors, path, "schemaVersion must be 1")
+        return
+    default_model = data.get("defaultModel")
+    if not isinstance(default_model, str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,127}/[^\u0000-\u001f\u007f-\u009f]{1,1024}", default_model):
+        _error(errors, path, "defaultModel must be a provider/model-id selector")
+        return
+    provider, _separator, model_id = default_model.partition("/")
+    if not model_id:
+        _error(errors, path, "defaultModel must be a provider/model-id selector")
+        return
+    models_root = ROOT / "models" / "catalog.v1.json"
+    if provider != "prime-inference" and models_root.exists():
+        models = _read_json(MODEL_CATALOG, errors) or {}
+        known = {
+            (model.get("provider"), model.get("id"))
+            for model in models.get("models", [])
+            if isinstance(model, dict)
+        }
+        if (provider, model_id) not in known:
+            _error(errors, path, f"defaultModel {default_model!r} does not match any model in {str(MODEL_CATALOG)!r}")
+
+
 def validate(root: Path = ROOT) -> list[str]:
     global ROOT
     ROOT = root.resolve()
@@ -881,15 +913,23 @@ def validate(root: Path = ROOT) -> list[str]:
     plugins_catalog = (ROOT / MCP_CATALOG).exists()
     if not plugins_catalog:
         _error(errors, "plugins", f"missing stable plugins catalog {str(MCP_CATALOG)!r}")
+    defaults_present = (ROOT / DEFAULT_MODEL_CATALOG).exists()
+    if not defaults_present:
+        _error(errors, DEFAULT_MODEL_CATALOG, "missing")
 
     models = _read_json(MODEL_CATALOG, errors)
     manifest = _read_json(MODEL_ADMISSION_MANIFEST, errors)
     mcp = _read_json(MCP_CATALOG, errors)
+    defaults = _read_json(DEFAULT_MODEL_CATALOG, errors)
 
     for path, data in ((MODEL_CATALOG, models), (MODEL_ADMISSION_MANIFEST, manifest), (MCP_CATALOG, mcp)):
         if data is not None:
             _check_canonical_json(path, data, errors)
             _check_urls_and_secrets(path, data, errors)
+    if defaults is not None:
+        _check_canonical_json(DEFAULT_MODEL_CATALOG, defaults, errors)
+        _check_urls_and_secrets(DEFAULT_MODEL_CATALOG, defaults, errors)
+        _validate_default_model_catalog(defaults, errors)
 
     if models is not None:
         _validate_model_catalog(models, errors)
