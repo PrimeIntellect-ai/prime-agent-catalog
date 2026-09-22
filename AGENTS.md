@@ -77,11 +77,22 @@ Model changes are tracked one model per PR, named for greppability:
   exporter fixes that change derived data, sync-blocker repairs): prefix
   `sync:` — for example `sync: refresh catalog from live upstreams`, branch
   `sync/<topic>`.
+<<<<<<< HEAD
+=======
+- Repo-process or CI changes: prefix `ci:` — for example `ci: enforce the
+  pr title convention`, branch `ci/<topic>`.
+>>>>>>> origin/main
 - Stack per-model PRs when the aggregate would conflict: base the second
   model's branch on the first model's branch (and so on). GitHub retargets
   the stack automatically as each PR merges; never force-push to unstitch it.
 - A PR body states: the surfaces added, the exporter commit that produced the
   generated artifacts, and the validation results (`npm test`).
+<<<<<<< HEAD
+=======
+- The title formats are enforced: ci.yml runs `scripts/check_pr_title.py` on
+  every PR whose diff touches `models/` and fails the build on a non-matching
+  title; `scripts/test_check_pr_title.py` guards the matcher.
+>>>>>>> origin/main
 - The client repo (PrimeIntellect-ai/prime-agent) uses `models: add <ids>`
   for compiled-catalog regenerations; its compiled catalog is one generated
   artifact, so batching several models in one client PR is fine — the
