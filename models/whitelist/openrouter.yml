@@ -198,6 +198,8 @@ ids:
   - "openai/gpt-6-astra-pro"
   - "openai/gpt-6-sol"
   - "openai/gpt-6-sol-pro"
+  - "openai/gpt-6-luna"
+  - "openai/gpt-6-luna-pro"
   - "openai/gpt-audio"
   - "openai/gpt-audio-mini"
   - "openai/gpt-chat-latest"
