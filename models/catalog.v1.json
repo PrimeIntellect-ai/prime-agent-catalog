@@ -12381,9 +12381,18 @@
 			"id": "gpt-6-sol",
 			"name": "GPT-6 Sol",
 			"api": "openai-responses",
-			"baseUrl": "https://api.openai.com/v1",
 			"provider": "openai",
+			"baseUrl": "https://api.openai.com/v1",
 			"reasoning": true,
+			"thinkingLevelMap": {
+				"off": "none",
+				"minimal": null,
+				"low": "low",
+				"medium": "medium",
+				"high": "high",
+				"xhigh": "xhigh",
+				"max": "max"
+			},
 			"input": [
 				"text",
 				"image"
@@ -12395,13 +12404,7 @@
 				"cacheWrite": 2.5
 			},
 			"contextWindow": 1050000,
-			"maxTokens": 128000,
-			"thinkingLevelMap": {
-				"off": "none",
-				"minimal": null,
-				"xhigh": "xhigh",
-				"max": "max"
-			}
+			"maxTokens": 128000
 		},
 		{
 			"id": "gpt-realtime-2.1",
@@ -17110,9 +17113,9 @@
 				"text"
 			],
 			"cost": {
-				"input": 0.899058,
-				"output": 1.798116,
-				"cacheRead": 0.0749215,
+				"input": 0.892272,
+				"output": 1.784544,
+				"cacheRead": 0.07435599999999999,
 				"cacheWrite": 0
 			},
 			"contextWindow": 1048576,
