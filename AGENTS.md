@@ -11,6 +11,7 @@ models/
   manual/<provider>.yml           # EDITABLE full entries for providers with no upstream
   catalog.v1.json                 # GENERATED aggregate; the client-fetched model artifact
   admission-manifest.v1.json      # GENERATED admitted id manifest; CI sync-review surface
+defaults.v1.json                   # EDITABLE preferred default model (provider/model-id)
 plugins/
   services/<server>.json          # EDITABLE truth: one MCP service entry per file
   catalog.v2.json                 # GENERATED aggregate; the client-fetched plugin artifact
