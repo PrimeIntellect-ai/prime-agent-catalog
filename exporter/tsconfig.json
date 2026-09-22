@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"noEmit": true,
+		"strict": true,
+		"target": "ES2022",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"skipLibCheck": true,
+		"types": ["node"]
+	},
+	"include": ["generate-models.ts", "vendor/**/*.ts"]
+}

@@ -9,7 +9,7 @@ Prime Agent clients fetche these at runtime, so a merged PR here ships new model
 #### Models:
 - For public provider models, we maintain a [whitelist](https://github.com/PrimeIntellect-ai/prime-agent-catalog/tree/main/models/whitelist) of ``models.dev`` models and providers, which list all models and providers available on Prime Agent by default
 - We also maintain a [list](https://github.com/PrimeIntellect-ai/prime-agent-catalog/tree/main/models/manual) of providers that are not documented in ``models.dev``, like the OpenAI ChatGPT Subscription
-- We use these sources of truth to generate our model catalog, which keeps track of model pricing and metadata across providers
+- We use these sources of truth to generate our model catalog, which keeps track of model pricing and metadata across providers. The generator lives in this repo: `npm run catalog:export` regenerates the catalog from the live upstream endpoints (models.dev, OpenRouter, the Vercel AI Gateway, and Prime Inference)
 
 #### Plugins:
 - Plugin payloads are generated from small editable source files (`plugins/services/`)
