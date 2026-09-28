@@ -53,6 +53,7 @@ ids:
   - "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
   - "global.anthropic.claude-sonnet-4-6"
   - "global.anthropic.claude-sonnet-5"
+  - "global.anthropic.claude-sonnet-5-5"
   - "global.openai.gpt-5.6-luna"
   - "global.openai.gpt-5.6-sol"
   - "global.openai.gpt-5.6-terra"
