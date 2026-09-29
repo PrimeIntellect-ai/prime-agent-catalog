@@ -4,4 +4,5 @@ source: "cerebras"
 ids:
   - "gemma-4-31b"
   - "gpt-oss-120b"
+  - "qwen-3.8-27b"
 globs: []

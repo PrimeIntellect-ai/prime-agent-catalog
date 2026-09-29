@@ -196,7 +196,8 @@
 		],
 		"cerebras": [
 			"gemma-4-31b",
-			"gpt-oss-120b"
+			"gpt-oss-120b",
+			"qwen-3.8-27b"
 		],
 		"cloudflare-ai-gateway": [
 			"claude-fable-5",
