@@ -1025,6 +1025,63 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 			}
 		}
 
+		// OpenCode Go live supplement: models.dev lags the zen/go gateway by a
+		// few releases. Whitelisted ids the gateway serves but models.dev has
+		// not published under the `opencode-go` variant yet are admitted with
+		// metadata borrowed from their closest published models.dev record.
+		// `omen-alpha` has no models.dev record anywhere and keeps its committed
+		// catalog entry (reported not-in-upstream by the sync summary).
+		const openCodeGoLiveDonors: Record<string, string> = {
+			"deepseek-flash": "deepseek",
+			"glm-5": "zai",
+			"glm-5.1": "zai",
+			"grok-4.5": "xai",
+			"hy3-preview": "tencent-tokenhub",
+			"kimi-k2.5": "opencode",
+			"mimo-v2-omni": "xiaomi",
+			"mimo-v2-pro": "xiaomi",
+			"minimax-m2.5": "opencode",
+			"qwen3.5-plus": "opencode",
+		};
+		let openCodeGoAdded = 0;
+		try {
+			const response = await fetch("https://opencode.ai/zen/go/v1/models");
+			if (!response.ok) {
+				throw new Error(`OpenCode Go catalog request failed with HTTP ${response.status}`);
+			}
+			const liveGo = (await response.json()) as { data?: { id?: string }[] };
+			const emittedGoIds = new Set(models.filter((model) => model.provider === "opencode-go").map((model) => model.id));
+			for (const entry of liveGo.data ?? []) {
+				const modelId = entry.id;
+				if (!modelId || emittedGoIds.has(modelId)) continue;
+				const donorProvider = openCodeGoLiveDonors[modelId];
+				if (!donorProvider) continue;
+				const donorModel = data[donorProvider]?.models?.[modelId] as ModelsDevModel | undefined;
+				if (!donorModel?.tool_call) continue;
+				emittedGoIds.add(modelId);
+				openCodeGoAdded += 1;
+				models.push({
+					id: modelId,
+					name: donorModel.name || modelId,
+					api: "openai-completions",
+					provider: "opencode-go",
+					baseUrl: "https://opencode.ai/zen/go/v1",
+					reasoning: donorModel.reasoning === true,
+					...(getModelsDevThinkingLevelMap(donorModel) ? { thinkingLevelMap: getModelsDevThinkingLevelMap(donorModel) } : {}),
+					input: getModelsDevInputModalities(donorModel),
+					cost: getModelsDevCost(donorModel),
+					// Qwen routes through OpenAI-compatible chat completions (mirror the
+					// opencode-go variant handling above).
+					...(modelId.startsWith("qwen") ? { compat: { thinkingFormat: "qwen" } } : {}),
+					contextWindow: getModelsDevContextWindow(donorModel),
+					maxTokens: getModelsDevMaxTokens(donorModel),
+				});
+			}
+			console.log(`OpenCode Go live supplement: added ${openCodeGoAdded} gateway models missing from models.dev`);
+		} catch (error) {
+			console.warn(`OpenCode Go live supplement failed; continuing with models.dev data only: ${formatError(error)}`);
+		}
+
 		// Process GitHub Copilot models
 		if (data["github-copilot"]?.models) {
 			for (const [modelId, model] of Object.entries(data["github-copilot"].models)) {
