@@ -128,7 +128,6 @@ const OPENAI_RESPONSES_NONE_REASONING_MODELS = new Set([
 	"gpt-5.6-sol",
 	"gpt-5.6-terra",
 	"gpt-5.6-luna",
-	"gpt-6-sol",
 	"gpt-6-luna",
 ]);
 
@@ -1556,29 +1555,6 @@ async function collectCatalogModelsWithStatus(): Promise<CatalogCollection> {
 				cacheWrite: 0,
 			},
 			contextWindow: 272000,
-			maxTokens: 128000,
-		});
-	}
-
-	// Add missing GPT-6 Sol / Luna until models.dev includes them. Specs verified
-	// against the OpenAI model pages: 1,050,000-token context, 128,000 max output,
-	// reasoning.effort none/low/medium (default)/high/xhigh/max, text+image input.
-	if (!allModels.some((m) => m.provider === "openai" && m.id === "gpt-6-sol")) {
-		allModels.push({
-			id: "gpt-6-sol",
-			name: "GPT-6 Sol",
-			api: "openai-responses",
-			baseUrl: "https://api.openai.com/v1",
-			provider: "openai",
-			reasoning: true,
-			input: ["text", "image"],
-			cost: {
-				input: 2,
-				output: 10,
-				cacheRead: 0.2,
-				cacheWrite: 2.5,
-			},
-			contextWindow: 1050000,
 			maxTokens: 128000,
 		});
 	}
