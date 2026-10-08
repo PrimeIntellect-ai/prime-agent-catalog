@@ -4700,6 +4700,35 @@
 			}
 		},
 		{
+			"id": "qwen-3.8-27b",
+			"name": "Qwen3.8 27B",
+			"api": "openai-completions",
+			"provider": "cerebras",
+			"baseUrl": "https://api.cerebras.ai/v1",
+			"reasoning": true,
+			"thinkingLevelMap": {
+				"off": "none",
+				"minimal": null,
+				"low": "low",
+				"medium": "medium",
+				"high": "high",
+				"xhigh": null,
+				"max": null
+			},
+			"input": [
+				"text",
+				"image"
+			],
+			"cost": {
+				"input": 0.99,
+				"output": 1.49,
+				"cacheRead": 0.99,
+				"cacheWrite": 0
+			},
+			"contextWindow": 131072,
+			"maxTokens": 40960
+		},
+		{
 			"id": "claude-fable-5",
 			"name": "Claude Fable 5",
 			"api": "anthropic-messages",
