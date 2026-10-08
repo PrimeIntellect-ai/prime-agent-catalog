@@ -1,0 +1,38 @@
+{
+	"server": "vercel",
+	"service": "vercel",
+	"label": "Vercel",
+	"url": "https://mcp.vercel.com",
+	"description": "Official Vercel MCP server (hosted). Authorizes via OAuth on first connection — the agent is prompted to sign in to Vercel; no token or local install required. Lets the agent inspect and manage Vercel projects, deployments, and logs, read deployment errors, work with environment variables, and answer questions from the Vercel docs.",
+	"category": "Developer Tools",
+	"aliases": [],
+	"publisher": "Vercel",
+	"transport": {
+		"type": "http",
+		"url": "https://mcp.vercel.com"
+	},
+	"auth": {
+		"strategy": "oauth",
+		"clientRegistration": "dynamic"
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "prime"
+		}
+	],
+	"homepage": "https://vercel.com",
+	"docsUrl": "https://vercel.com/docs/mcp/vercel-mcp",
+	"privacyUrl": "https://vercel.com/legal/privacy-policy",
+	"supportUrl": "https://vercel.com/help",
+	"oauth": {
+		"kind": "oauth"
+	}
+}
