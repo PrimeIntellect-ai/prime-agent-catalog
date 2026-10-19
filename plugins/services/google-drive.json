@@ -1,0 +1,45 @@
+{
+	"server": "google-drive",
+	"service": "google-workspace",
+	"label": "Google Drive",
+	"url": "https://drivemcp.googleapis.com/mcp/v1",
+	"description": "Official Google Drive MCP server (hosted, Workspace Developer Preview). Lets the agent search files, read file metadata and content, and download files. Requires your own Google OAuth client.",
+	"category": "Productivity",
+	"aliases": [
+		"drive",
+		"gdrive"
+	],
+	"publisher": "Google",
+	"transport": {
+		"type": "http",
+		"url": "https://drivemcp.googleapis.com/mcp/v1"
+	},
+	"auth": {
+		"strategy": "oauth",
+		"clientRegistration": "pre-registered",
+		"reviewedScopes": [
+			"https://www.googleapis.com/auth/drive.readonly"
+		]
+	},
+	"setup": {
+		"status": "requires-setup",
+		"reason": "bring your own Google OAuth client: add google-drive to mcpServers with clientId, clientSecret, callbackPort and scopes, then run /mcp login google-drive (guide: https://github.com/PrimeIntellect-ai/prime-agent/blob/main/docs/google-workspace-mcp.md)",
+		"readiness": "user-setup",
+		"requirement": "registered-client"
+	},
+	"verification": {
+		"status": "metadata-reviewed"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "prime"
+		}
+	],
+	"homepage": "https://workspace.google.com",
+	"docsUrl": "https://developers.google.com/workspace/drive/api/guides/configure-mcp-server",
+	"privacyUrl": "https://policies.google.com/privacy",
+	"oauth": {
+		"kind": "oauth"
+	}
+}

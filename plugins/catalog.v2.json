@@ -1,18 +1,18 @@
 {
 	"version": 2,
 	"counts": {
-		"total": 69,
-		"http": 69,
+		"total": 71,
+		"http": 71,
 		"httpTemplate": 0,
 		"sse": 0,
 		"stdio": 0,
 		"ready": 58,
-		"requiresSetup": 11,
-		"metadataReviewed": 2,
-		"oauthStrategy": 6,
+		"requiresSetup": 13,
+		"metadataReviewed": 4,
+		"oauthStrategy": 8,
 		"apiKeyStrategy": 10,
 		"readinessOauthReady": 58,
-		"readinessUserSetup": 11,
+		"readinessUserSetup": 13,
 		"readinessPrimeRestricted": 0,
 		"readinessUnknown": 0
 	},
@@ -796,6 +796,97 @@
 			],
 			"homepage": "https://github.com/",
 			"privacyUrl": "https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement"
+		},
+		{
+			"server": "google-drive",
+			"service": "google-workspace",
+			"label": "Google Drive",
+			"url": "https://drivemcp.googleapis.com/mcp/v1",
+			"description": "Official Google Drive MCP server (hosted, Workspace Developer Preview). Lets the agent search files, read file metadata and content, and download files. Requires your own Google OAuth client.",
+			"category": "Productivity",
+			"aliases": [
+				"drive",
+				"gdrive"
+			],
+			"publisher": "Google",
+			"transport": {
+				"type": "http",
+				"url": "https://drivemcp.googleapis.com/mcp/v1"
+			},
+			"auth": {
+				"strategy": "oauth",
+				"clientRegistration": "pre-registered",
+				"reviewedScopes": [
+					"https://www.googleapis.com/auth/drive.readonly"
+				]
+			},
+			"setup": {
+				"status": "requires-setup",
+				"reason": "bring your own Google OAuth client: add google-drive to mcpServers with clientId, clientSecret, callbackPort and scopes, then run /mcp login google-drive (guide: https://github.com/PrimeIntellect-ai/prime-agent/blob/main/docs/google-workspace-mcp.md)",
+				"readiness": "user-setup",
+				"requirement": "registered-client"
+			},
+			"verification": {
+				"status": "metadata-reviewed"
+			},
+			"legacyBuiltin": false,
+			"provenance": [
+				{
+					"source": "prime"
+				}
+			],
+			"homepage": "https://workspace.google.com",
+			"docsUrl": "https://developers.google.com/workspace/drive/api/guides/configure-mcp-server",
+			"privacyUrl": "https://policies.google.com/privacy",
+			"oauth": {
+				"kind": "oauth"
+			}
+		},
+		{
+			"server": "google-sheets",
+			"service": "google-workspace",
+			"label": "Google Sheets",
+			"url": "https://sheetsmcp.googleapis.com/mcp/v1",
+			"description": "Official Google Sheets MCP server (hosted, Workspace Developer Preview). Lets the agent read spreadsheet metadata and values and apply atomic batch updates. Requires your own Google OAuth client.",
+			"category": "Productivity",
+			"aliases": [
+				"gsheets",
+				"sheets"
+			],
+			"publisher": "Google",
+			"transport": {
+				"type": "http",
+				"url": "https://sheetsmcp.googleapis.com/mcp/v1"
+			},
+			"auth": {
+				"strategy": "oauth",
+				"clientRegistration": "pre-registered",
+				"reviewedScopes": [
+					"https://www.googleapis.com/auth/drive.readonly",
+					"https://www.googleapis.com/auth/spreadsheets"
+				]
+			},
+			"setup": {
+				"status": "requires-setup",
+				"reason": "bring your own Google OAuth client: add google-sheets to mcpServers with clientId, clientSecret, callbackPort and scopes, then run /mcp login google-sheets (guide: https://github.com/PrimeIntellect-ai/prime-agent/blob/main/docs/google-workspace-mcp.md)",
+				"readiness": "user-setup",
+				"requirement": "registered-client"
+			},
+			"verification": {
+				"status": "metadata-reviewed"
+			},
+			"legacyBuiltin": false,
+			"provenance": [
+				{
+					"source": "prime"
+				}
+			],
+			"homepage": "https://workspace.google.com",
+			"docsUrl": "https://developers.google.com/workspace/sheets/api/guides/configure-mcp-server",
+			"privacyUrl": "https://policies.google.com/privacy",
+			"oauth": {
+				"kind": "oauth"
+			}
 		},
 		{
 			"server": "grafana-cloud",
