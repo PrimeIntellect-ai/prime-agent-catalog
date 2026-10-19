@@ -42,6 +42,7 @@ SECURITY.md                       # production trust boundary + required repo se
 - All JSON is canonical: tab-indented, deterministic key order, trailing newline. YAML is parsed only by the TypeScript exporter under `exporter/`, not by this repository's Python tooling.
 - Each `models/*/<provider>.yml` file is per provider. Each `plugins/services/<server>.json` file is one connector = one server id; several files can share a service brand (for example, the zoom family: `zoom`, `zoom-chat`, `zoom-meetings`, `zoom-tasks`, `zoom-whiteboard`, and `zoom-canvas` all carry `service: zoom`).
 - Plugin source files keep only working client data; the import-time audit dossier (`sources`, `auth.metadata`, `auth.alternatives`, detailed provenance) was stripped because git history preserves the audit evidence.
+- Connector contract for bulk or integrity-critical data (spreadsheets, finance, file contents): the service must be usable from the kernel's `mcp.call_tool` with full structured arguments and structured results. Reject services whose tools only accept natural-language instructions interpreted by a server-side model, or whose arguments can only reach the server through model transcription. Reviewers check this before admitting such a service.
 
 ## Commands
 
