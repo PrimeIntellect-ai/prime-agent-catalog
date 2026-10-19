@@ -1,0 +1,46 @@
+{
+	"server": "google-sheets",
+	"service": "google-workspace",
+	"label": "Google Sheets",
+	"url": "https://sheetsmcp.googleapis.com/mcp/v1",
+	"description": "Official Google Sheets MCP server (hosted, Workspace Developer Preview). Lets the agent read spreadsheet metadata and values and apply atomic batch updates. Requires your own Google OAuth client.",
+	"category": "Productivity",
+	"aliases": [
+		"gsheets",
+		"sheets"
+	],
+	"publisher": "Google",
+	"transport": {
+		"type": "http",
+		"url": "https://sheetsmcp.googleapis.com/mcp/v1"
+	},
+	"auth": {
+		"strategy": "oauth",
+		"clientRegistration": "pre-registered",
+		"reviewedScopes": [
+			"https://www.googleapis.com/auth/drive.readonly",
+			"https://www.googleapis.com/auth/spreadsheets"
+		]
+	},
+	"setup": {
+		"status": "requires-setup",
+		"reason": "bring your own Google OAuth client: add google-sheets to mcpServers with clientId, clientSecret, callbackPort and scopes, then run /mcp login google-sheets (guide: https://github.com/PrimeIntellect-ai/prime-agent/blob/main/docs/google-workspace-mcp.md)",
+		"readiness": "user-setup",
+		"requirement": "registered-client"
+	},
+	"verification": {
+		"status": "metadata-reviewed"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "prime"
+		}
+	],
+	"homepage": "https://workspace.google.com",
+	"docsUrl": "https://developers.google.com/workspace/sheets/api/guides/configure-mcp-server",
+	"privacyUrl": "https://policies.google.com/privacy",
+	"oauth": {
+		"kind": "oauth"
+	}
+}
