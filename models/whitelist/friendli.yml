@@ -1,0 +1,10 @@
+# Admission policy for friendli.
+# source: friendli-api is FriendliAI's public /serverless/v1/models catalog.
+source: "friendli-api"
+ids:
+  - "google/gemma-4-31B-it"
+  - "zai-org/GLM-5.1"
+  - "zai-org/GLM-5.2"
+  - "zai-org/GLM-5.3"
+  - "zai-org/GLM-5.3-Flash"
+globs: []

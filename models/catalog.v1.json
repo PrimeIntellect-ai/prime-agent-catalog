@@ -6658,6 +6658,145 @@
 			"maxTokens": 131072
 		},
 		{
+			"id": "google/gemma-4-31B-it",
+			"name": "google/gemma-4-31B-it",
+			"api": "openai-completions",
+			"provider": "friendli",
+			"baseUrl": "https://api.friendli.ai/serverless/v1",
+			"reasoning": true,
+			"compat": {
+				"thinkingFormat": "qwen-chat-template"
+			},
+			"input": [
+				"text",
+				"image"
+			],
+			"cost": {
+				"input": 0.14,
+				"output": 0.4,
+				"cacheRead": 0,
+				"cacheWrite": 0
+			},
+			"contextWindow": 262144,
+			"maxTokens": 262144
+		},
+		{
+			"id": "zai-org/GLM-5.1",
+			"name": "zai-org/GLM-5.1",
+			"api": "openai-completions",
+			"provider": "friendli",
+			"baseUrl": "https://api.friendli.ai/serverless/v1",
+			"reasoning": true,
+			"compat": {
+				"thinkingFormat": "qwen-chat-template"
+			},
+			"input": [
+				"text"
+			],
+			"cost": {
+				"input": 1.4,
+				"output": 4.4,
+				"cacheRead": 0.26,
+				"cacheWrite": 0
+			},
+			"contextWindow": 202752,
+			"maxTokens": 202752
+		},
+		{
+			"id": "zai-org/GLM-5.2",
+			"name": "zai-org/GLM-5.2",
+			"api": "openai-completions",
+			"provider": "friendli",
+			"baseUrl": "https://api.friendli.ai/serverless/v1",
+			"reasoning": true,
+			"thinkingLevelMap": {
+				"off": null,
+				"minimal": null,
+				"low": null,
+				"medium": null,
+				"high": "high",
+				"xhigh": null,
+				"max": "max"
+			},
+			"compat": {
+				"thinkingFormat": "openai"
+			},
+			"input": [
+				"text"
+			],
+			"cost": {
+				"input": 1.4,
+				"output": 4.4,
+				"cacheRead": 0.26,
+				"cacheWrite": 0
+			},
+			"contextWindow": 1048576,
+			"maxTokens": 1048576
+		},
+		{
+			"id": "zai-org/GLM-5.3",
+			"name": "zai-org/GLM-5.3",
+			"api": "openai-completions",
+			"provider": "friendli",
+			"baseUrl": "https://api.friendli.ai/serverless/v1",
+			"reasoning": true,
+			"thinkingLevelMap": {
+				"off": null,
+				"minimal": null,
+				"low": "low",
+				"medium": null,
+				"high": "high",
+				"xhigh": null,
+				"max": "max"
+			},
+			"compat": {
+				"thinkingFormat": "openai"
+			},
+			"input": [
+				"text"
+			],
+			"cost": {
+				"input": 1.26,
+				"output": 3.96,
+				"cacheRead": 0.234,
+				"cacheWrite": 0
+			},
+			"contextWindow": 1048576,
+			"maxTokens": 1048576
+		},
+		{
+			"id": "zai-org/GLM-5.3-Flash",
+			"name": "zai-org/GLM-5.3-Flash",
+			"api": "openai-completions",
+			"provider": "friendli",
+			"baseUrl": "https://api.friendli.ai/serverless/v1",
+			"reasoning": true,
+			"thinkingLevelMap": {
+				"off": null,
+				"minimal": null,
+				"low": "low",
+				"medium": null,
+				"high": "high",
+				"xhigh": null,
+				"max": "max"
+			},
+			"compat": {
+				"thinkingFormat": "openai"
+			},
+			"input": [
+				"text",
+				"image"
+			],
+			"cost": {
+				"input": 0.15,
+				"output": 0.5,
+				"cacheRead": 0.03,
+				"cacheWrite": 0
+			},
+			"contextWindow": 1048576,
+			"maxTokens": 1048576
+		},
+		{
 			"id": "claude-fable-5",
 			"name": "Claude Fable 5",
 			"api": "anthropic-messages",
