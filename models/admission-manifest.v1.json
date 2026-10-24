@@ -279,6 +279,13 @@
 			"accounts/fireworks/routers/glm-5p2-fast",
 			"accounts/fireworks/routers/kimi-k3-fast"
 		],
+		"friendli": [
+			"google/gemma-4-31B-it",
+			"zai-org/GLM-5.1",
+			"zai-org/GLM-5.2",
+			"zai-org/GLM-5.3",
+			"zai-org/GLM-5.3-Flash"
+		],
 		"github-copilot": [
 			"claude-fable-5",
 			"claude-fable-5.1",

@@ -111,8 +111,9 @@ Model changes are tracked one model per PR, named for greppability:
 This repository is self-sufficient: `exporter/generate-models.ts` (plus its
 vendored type/constant deps) lives here and carries all per-provider fetch
 and mapping knowledge. It fetches models.dev (including its `vercel` slug
-for the Vercel AI Gateway) and the OpenRouter API, applies the admission
-policy, and regenerates the model aggregate and admission manifest in place.
+for the Vercel AI Gateway), the OpenRouter API, and the FriendliAI API, applies
+the admission policy, and regenerates the model aggregate and admission manifest
+in place.
 The prime-agent client only consumes the generated artifacts — no catalog
 data logic lives there.
 
@@ -131,7 +132,7 @@ Python suite.
 
 `models/manual/<provider>.yml` stores hand-written full entries for providers with no synced upstream. Manual providers are emitted verbatim by the exporter and are never synced.
 
-Current policy inventory: `models/whitelist/` contains 30 synced providers; `models/manual/` contains only `openai-codex.yml`.
+Current policy inventory: `models/whitelist/` contains 31 synced providers; `models/manual/` contains only `openai-codex.yml`.
 
 The Python catalog tooling remains stdlib-only and never parses `whitelist/` or `manual/`; it validates only the committed model aggregate and admission manifest (the TypeScript exporter under `exporter/` is the YAML-reading generator). prime-inference is never synced here; clients fetch it live with credentials.
 
@@ -155,8 +156,9 @@ Follow this order. Every rule exists because a failure mode was observed.
    name: match the endpoint the client actually calls. Verified traps: our
    `zai` is the coding-plan product, so its source is `zai-coding-plan`, NOT the
    plain `zai` API slug; our `kimi-coding` maps to `kimi-for-coding`;
-   `vercel-ai-gateway` maps to the `vercel` slug. OpenRouter and Vercel fetch
-   their own billing-authoritative endpoints instead of models.dev.
+   `vercel-ai-gateway` maps to the `vercel` slug. OpenRouter, Vercel, and
+   FriendliAI fetch their own billing-authoritative endpoints instead of
+   models.dev.
 3. **Upstream exists → whitelist. NEVER manual.** Add the exact id (or an
    intentional glob) to `models/whitelist/<provider>.yml` and run the exporter;
    metadata (name, cost, context, limits, thinkingLevelMap from

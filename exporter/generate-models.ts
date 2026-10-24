@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 /**
  * The prime-agent-catalog models exporter: fetches models.dev (including its
- * `vercel` slug for the Vercel AI Gateway) and the OpenRouter API, applies
- * the per-provider mapping knowledge and admission policy
- * (models/whitelist + models/manual), and regenerates
+ * `vercel` slug for the Vercel AI Gateway), the OpenRouter API, and the
+ * FriendliAI API, applies the per-provider mapping knowledge and admission
+ * policy (models/whitelist + models/manual), and regenerates
  * models/catalog.v1.json + models/admission-manifest.v1.json in THIS
  * repository.
  *
@@ -460,6 +460,77 @@ async function fetchOpenRouterModels(): Promise<Model<any>[]> {
 		return models;
 	} catch (error) {
 		throw new Error(`Failed to fetch OpenRouter models: ${formatError(error)}`);
+	}
+}
+
+const FRIENDLI_BASE_URL = "https://api.friendli.ai/serverless/v1";
+
+interface FriendliModel {
+	id: string;
+	name?: string;
+	context_length?: number;
+	max_completion_tokens?: number;
+	/** Decimal strings in $/token; `prompt`/`completion` duplicate `input`/`output`. */
+	pricing?: Partial<Record<"input" | "output" | "prompt" | "completion" | "input_cache_read" | "cache_write", string>>;
+	functionality?: { tool_call?: boolean };
+	reasoning?: boolean;
+	/** Same shape as models.dev `reasoning_options`. */
+	reasoning_options?: ModelsDevModel["reasoning_options"];
+	input_modalities?: string[];
+}
+
+/** $/token decimal string -> $/million tokens, without float noise (`0.0000004` -> `0.4`). */
+function friendliPerMillion(value: string | undefined): number {
+	return Number((Number(value) * 1_000_000).toPrecision(12));
+}
+
+/**
+ * FriendliAI's billing-authoritative public catalog (`GET /serverless/v1/models`, no auth).
+ * Friendli 422s unknown top-level fields and `reasoning_effort: "none"`: effort-declared models
+ * take `reasoning_effort` (the derived map keeps `off` null, so it is never sent); toggle-only
+ * models switch thinking through `chat_template_kwargs.enable_thinking`.
+ */
+async function fetchFriendliModels(): Promise<Model<"openai-completions">[]> {
+	try {
+		console.log("Fetching models from FriendliAI API...");
+		const response = await fetch(`${FRIENDLI_BASE_URL}/models`);
+		if (!response.ok) {
+			throw new Error(`FriendliAI catalog request failed with HTTP ${response.status}`);
+		}
+		const data = (await response.json()) as { data?: FriendliModel[] };
+		const models: Model<"openai-completions">[] = [];
+		for (const model of Array.isArray(data.data) ? data.data : []) {
+			if (model.functionality?.tool_call !== true) continue;
+			const thinkingLevelMap = getModelsDevThinkingLevelMap({
+				id: model.id,
+				name: model.name || model.id,
+				reasoning_options: model.reasoning_options,
+			});
+			const reasoning = model.reasoning === true;
+			models.push({
+				id: model.id,
+				name: model.name || model.id,
+				api: "openai-completions",
+				provider: "friendli",
+				baseUrl: FRIENDLI_BASE_URL,
+				reasoning,
+				...(thinkingLevelMap ? { thinkingLevelMap } : {}),
+				...(reasoning ? { compat: { thinkingFormat: thinkingLevelMap ? "openai" : "qwen-chat-template" } } : {}),
+				input: model.input_modalities?.includes("image") ? ["text", "image"] : ["text"],
+				cost: {
+					input: friendliPerMillion(model.pricing?.input ?? model.pricing?.prompt),
+					output: friendliPerMillion(model.pricing?.output ?? model.pricing?.completion),
+					cacheRead: friendliPerMillion(model.pricing?.input_cache_read ?? "0"),
+					cacheWrite: friendliPerMillion(model.pricing?.cache_write ?? "0"),
+				},
+				contextWindow: model.context_length as number,
+				maxTokens: model.max_completion_tokens as number,
+			});
+		}
+		console.log(`Fetched ${models.length} tool-capable models from FriendliAI`);
+		return models;
+	} catch (error) {
+		throw new Error(`Failed to fetch FriendliAI models: ${formatError(error)}`);
 	}
 }
 
@@ -1271,6 +1342,12 @@ async function collectCatalogModelsWithStatus(): Promise<CatalogCollection> {
 		collectedModels.push(...(await fetchOpenRouterModels()));
 	} catch (error) {
 		skippedProviders.openrouter = formatError(error);
+	}
+
+	try {
+		collectedModels.push(...(await fetchFriendliModels()));
+	} catch (error) {
+		skippedProviders.friendli = formatError(error);
 	}
 
 	const allModels = collectedModels.filter(
@@ -2240,6 +2317,7 @@ const LIVE_UPSTREAM_PROVIDER_SOURCES: Record<string, string> = {
 	"cloudflare-workers-ai": "cloudflare-workers-ai",
 	deepseek: "deepseek",
 	fireworks: "fireworks-ai",
+	friendli: "friendli-api",
 	"github-copilot": "github-copilot",
 	google: "google",
 	"google-vertex": "google-vertex",
