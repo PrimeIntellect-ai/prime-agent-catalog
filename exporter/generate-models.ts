@@ -147,6 +147,7 @@ const MODELS_DEV_PROVIDER_IDS = [
 	"groq",
 	"huggingface",
 	"kimi-coding",
+	"meta",
 	"minimax",
 	"minimax-cn",
 	"mistral",
@@ -836,6 +837,28 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 					api: "openai-completions",
 					provider: "xai",
 					baseUrl: "https://api.x.ai/v1",
+					reasoning: m.reasoning === true,
+					...(getModelsDevThinkingLevelMap(m) ? { thinkingLevelMap: getModelsDevThinkingLevelMap(m) } : {}),
+					input: getModelsDevInputModalities(m),
+					cost: getModelsDevCost(m),
+					contextWindow: getModelsDevContextWindow(m),
+					maxTokens: getModelsDevMaxTokens(m),
+				});
+			}
+		}
+
+		// Process Meta models (Muse, via the Meta Model API on the Responses API).
+		if (data.meta?.models) {
+			for (const [modelId, model] of Object.entries(data.meta.models)) {
+				const m = model as ModelsDevModel;
+				if (m.tool_call !== true) continue;
+
+				models.push({
+					id: modelId,
+					name: m.name || modelId,
+					api: "openai-responses",
+					provider: "meta",
+					baseUrl: "https://api.meta.ai/v1",
 					reasoning: m.reasoning === true,
 					...(getModelsDevThinkingLevelMap(m) ? { thinkingLevelMap: getModelsDevThinkingLevelMap(m) } : {}),
 					input: getModelsDevInputModalities(m),
@@ -2246,6 +2269,7 @@ const LIVE_UPSTREAM_PROVIDER_SOURCES: Record<string, string> = {
 	groq: "groq",
 	huggingface: "huggingface",
 	"kimi-coding": "kimi-code-plan-cn",
+	"meta": "meta",
 	minimax: "minimax",
 	"minimax-cn": "minimax-cn",
 	mistral: "mistral",

@@ -46,6 +46,7 @@ export type KnownProvider =
 	| "opencode"
 	| "opencode-go"
 	| "kimi-coding"
+	| "meta"
 	| "cloudflare-workers-ai"
 	| "cloudflare-ai-gateway"
 	| "xiaomi"
