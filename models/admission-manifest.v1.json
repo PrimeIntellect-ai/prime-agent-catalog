@@ -295,6 +295,7 @@
 			"gemini-3.6-flash",
 			"gemini-3.7-flash",
 			"gemini-3.8-flash",
+			"gemini-4-argon",
 			"gpt-5-mini",
 			"gpt-5.3-codex",
 			"gpt-5.4",

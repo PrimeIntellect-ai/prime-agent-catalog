@@ -7102,6 +7102,40 @@
 			}
 		},
 		{
+			"id": "gemini-4-argon",
+			"name": "Gemini 4 Argon",
+			"api": "openai-completions",
+			"provider": "github-copilot",
+			"baseUrl": "https://api.individual.githubcopilot.com",
+			"reasoning": true,
+			"thinkingLevelMap": {
+				"off": null,
+				"minimal": null,
+				"low": "low",
+				"medium": "medium",
+				"high": "high",
+				"xhigh": null,
+				"max": null
+			},
+			"input": [
+				"text",
+				"image"
+			],
+			"cost": {
+				"input": 2,
+				"output": 10,
+				"cacheRead": 0.1,
+				"cacheWrite": 0
+			},
+			"contextWindow": 1048576,
+			"maxTokens": 65536,
+			"compat": {
+				"supportsStore": false,
+				"supportsDeveloperRole": false,
+				"supportsReasoningEffort": false
+			}
+		},
+		{
 			"id": "gpt-5-mini",
 			"name": "GPT-5 Mini",
 			"api": "openai-responses",
