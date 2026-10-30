@@ -6853,6 +6853,35 @@
 			"maxTokens": 64000
 		},
 		{
+			"id": "claude-opus-5.5",
+			"name": "Claude Opus 5.5",
+			"api": "anthropic-messages",
+			"provider": "github-copilot",
+			"baseUrl": "https://api.individual.githubcopilot.com",
+			"reasoning": true,
+			"thinkingLevelMap": {
+				"off": null,
+				"minimal": null,
+				"low": "low",
+				"medium": "medium",
+				"high": "high",
+				"xhigh": "xhigh",
+				"max": "max"
+			},
+			"input": [
+				"text",
+				"image"
+			],
+			"cost": {
+				"input": 4,
+				"output": 20,
+				"cacheRead": 0.2,
+				"cacheWrite": 5
+			},
+			"contextWindow": 1000000,
+			"maxTokens": 128000
+		},
+		{
 			"id": "claude-sonnet-4.6",
 			"name": "Claude Sonnet 4.6",
 			"api": "anthropic-messages",
