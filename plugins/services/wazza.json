@@ -1,0 +1,33 @@
+{
+	"server": "wazza",
+	"service": "wazza",
+	"label": "Wazza",
+	"url": "https://api-pro.wazza.ai/v1/mcp",
+	"description": "QC, conform and AI video, image and sound generation for film. Priced before every run.\nOfficial hosted Wazza MCP server (Streamable HTTP). Authorizes via OAuth 2.1 with PKCE on first connection; no token or local install required. Billing uses prepaid Wazza credits: the price shows before every run, and each connection has a monthly spend cap.",
+	"category": "Creativity",
+	"aliases": [],
+	"publisher": "Wazza",
+	"transport": {
+		"type": "http",
+		"url": "https://api-pro.wazza.ai/v1/mcp"
+	},
+	"auth": {
+		"strategy": "oauth",
+		"clientRegistration": "dynamic"
+	},
+	"setup": {
+		"status": "ready",
+		"readiness": "oauth-ready"
+	},
+	"verification": {
+		"status": "unverified"
+	},
+	"legacyBuiltin": false,
+	"provenance": [
+		{
+			"source": "prime"
+		}
+	],
+	"homepage": "https://wazza.ai",
+	"docsUrl": "https://api-pro.wazza.ai/docs/guide"
+}
