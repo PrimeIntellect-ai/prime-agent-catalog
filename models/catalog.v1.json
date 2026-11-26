@@ -3381,6 +3381,35 @@
 			}
 		},
 		{
+			"id": "claude-mythos-5-2",
+			"name": "Claude Mythos 5.2",
+			"api": "anthropic-messages",
+			"baseUrl": "https://api.anthropic.com",
+			"provider": "anthropic",
+			"reasoning": true,
+			"input": [
+				"text",
+				"image"
+			],
+			"cost": {
+				"input": 8,
+				"output": 40,
+				"cacheRead": 0.2,
+				"cacheWrite": 10
+			},
+			"contextWindow": 1000000,
+			"maxTokens": 128000,
+			"thinkingLevelMap": {
+				"off": null,
+				"minimal": null,
+				"low": "low",
+				"medium": "medium",
+				"high": "high",
+				"xhigh": "xhigh",
+				"max": "max"
+			}
+		},
+		{
 			"id": "claude-opus-4-5",
 			"name": "Claude Opus 4.5 (latest)",
 			"api": "anthropic-messages",
