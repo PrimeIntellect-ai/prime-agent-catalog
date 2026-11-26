@@ -3479,7 +3479,7 @@
 				"cacheRead": 0.3,
 				"cacheWrite": 3.75
 			},
-			"contextWindow": 1000000,
+			"contextWindow": 200000,
 			"maxTokens": 64000
 		},
 		{
@@ -3499,7 +3499,7 @@
 				"cacheRead": 0.3,
 				"cacheWrite": 3.75
 			},
-			"contextWindow": 1000000,
+			"contextWindow": 200000,
 			"maxTokens": 64000
 		},
 		{
@@ -3580,7 +3580,7 @@
 			"cost": {
 				"input": 2,
 				"output": 10,
-				"cacheRead": 0.2,
+				"cacheRead": 0.1,
 				"cacheWrite": 2.5
 			},
 			"contextWindow": 1000000,
