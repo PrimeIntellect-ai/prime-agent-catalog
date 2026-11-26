@@ -1449,6 +1449,31 @@ async function collectCatalogModelsWithStatus(): Promise<CatalogCollection> {
 		});
 	}
 
+	// Add missing Claude Mythos 5.1 until models.dev includes it. Specs verified against the
+	// Anthropic models overview and pricing pages: 1M context, 128K max output,
+	// $10/$50 per MTok, $0.25 cache hits, $12.50 5-minute cache writes.
+	// Effort levels follow the Fable model of the same generation.
+	if (!allModels.some((m) => m.provider === "anthropic" && m.id === "claude-mythos-5-1")) {
+		allModels.push({
+			id: "claude-mythos-5-1",
+			name: "Claude Mythos 5.1",
+			api: "anthropic-messages",
+			baseUrl: "https://api.anthropic.com",
+			provider: "anthropic",
+			reasoning: true,
+			input: ["text", "image"],
+			cost: {
+				input: 10,
+				output: 50,
+				cacheRead: 0.25,
+				cacheWrite: 12.5,
+			},
+			contextWindow: 1000000,
+			maxTokens: 128000,
+			thinkingLevelMap: { off: null, minimal: null, low: "low", medium: "medium", high: "high" },
+		});
+	}
+
 	// Add missing Gemini 3.1 Flash Lite Preview until models.dev includes it.
 	if (!allModels.some((m) => m.provider === "google" && m.id === "gemini-3.1-flash-lite-preview")) {
 		allModels.push({
